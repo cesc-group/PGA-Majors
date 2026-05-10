@@ -372,31 +372,153 @@ var SB_URL='https://atkdzfhoadnoyhbyxwwp.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0a2R6ZmhvYWRub3loYnl4d3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MzQ1MDIsImV4cCI6MjA5MDMxMDUwMn0.jbMKkE1aurjalbLSkIvP2t4QBdGHrJCT2eBmLyR4xVk';
 var DB_TABLE='entries_pga2026';
 var PROXY='https://api.allorigins.win/get?url=';
-var POOL_URL='https://cristobalescudero-ctrl.github.io/PGA-Majors/';
+var POOL_URL='https://cesc-group.github.io/PGA-Majors/';
 var DEADLINE=new Date(2026,4,14,8,0,0);
 var TABS=['rules','enter','leaderboard','standings','field','admin'];
 var ESPN_IDS=['401580354','401663000','401663001'];
 var ESPN_BASE='https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=';
 
 var FIELD=[
-  'Aaron Rai','Adam Scott','Akshay Bhatia','Aldrich Potgieter','Alex Noren',
-  'Andrew Novak','Ben Griffin','Brian Campbell','Brian Harman','Brooks Koepka',
-  'Bryson DeChambeau','Cam Davis','Cameron Young','Chris Gotterup','Christiaan Bezuidenhout',
-  'Collin Morikawa','Corey Conners','Daniel Berger','Davis Riley','Denny McCarthy',
-  'Dustin Johnson','Emiliano Grillo','Eric Cole','Garrick Higgo','Harry Hall',
-  'Harris English','Haotong Li','Hideki Matsuyama','Jacob Bridgeman','Jake Knapp',
-  'Jason Day','Jhonattan Vegas','J.J. Spaun','Joel Dahmen','Johnny Keefer',
-  'Jon Rahm','Jordan Spieth','J.T. Poston','Justin Rose','Justin Thomas',
-  'Karl Vilips','Keegan Bradley','Kurt Kitayama','Lucas Glover','Ludvig Aberg',
-  'Luke Donald','Marco Penge','Matt Fitzpatrick','Matt McCarty','Matti Schmid',
-  'Maverick McNealy','Max Greyserman','Max Homa','Michael Kim','Min Woo Lee',
-  'Nick Taylor','Nicolai Hojgaard','Nico Echavarria','Patrick Cantlay','Patrick Reed',
-  'Rasmus Hojgaard','Rickie Fowler','Rico Hoey','Robert MacIntyre','Rory McIlroy',
-  'Russell Henley','Ryan Fox','Ryan Gerard','Sahith Theegala','Sam Burns',
-  'Sam Stevens','Scottie Scheffler','Sepp Straka','Sergio Garcia','Shane Lowry',
-  'Si Woo Kim','Stephan Jaeger','Sungjae Im','Taylor Moore','Taylor Pendrith',
-  'Thorbjorn Olesen','Tom McKibbin','Tommy Fleetwood','Tony Finau','Tyrrell Hatton',
-  'Viktor Hovland','Wyndham Clark','Xander Schauffele'
+  'Aaron Rai',
+  'Adam Schenk',
+  'Adam Scott',
+  'Adrien Saddier',
+  'Akshay Bhatia',
+  'Aldrich Potgieter',
+  'Alex Fitzpatrick',
+  'Alex Noren',
+  'Alex Smalley',
+  'Andrew Novak',
+  'Andrew Putnam',
+  'Andy Sullivan',
+  'Angel Ayora',
+  'Austin Smotherman',
+  'Ben Griffin',
+  'Ben Polland',
+  'Bernd Wiesberger',
+  'Billy Horschel',
+  'Braden Shattuck',
+  'Brandt Snedeker',
+  'Brian Campbell',
+  'Brian Harman',
+  'Brooks Koepka',
+  'Bryson DeChambeau',
+  'Bud Cauley',
+  'Cameron Smith',
+  'Cameron Young',
+  'Casey Jarvis',
+  'Chandler Blanchet',
+  'Chris Gotterup',
+  'Chris Kirk',
+  'Christiaan Bezuidenhout',
+  'Collin Morikawa',
+  'Corey Conners',
+  'Daniel Berger',
+  'Daniel Brown',
+  'Daniel Hillier',
+  'David Lipsky',
+  'David Puig',
+  'Davis Riley',
+  'Denny McCarthy',
+  'Derek Berg',
+  'Dustin Johnson',
+  'Elvis Smylie',
+  'Emiliano Grillo',
+  'Garrick Higgo',
+  'Gary Woodland',
+  'Haotong Li',
+  'Harris English',
+  'Harry Hall',
+  'Hideki Matsuyama',
+  'Ian Holt',
+  'J.J. Spaun',
+  'J.T. Poston',
+  'Jacob Bridgeman',
+  'Jake Knapp',
+  'Jared Jones',
+  'Jason Day',
+  'Jason Dufner',
+  'Jayden Schaper',
+  'Jhonattan Vegas',
+  'Jimmy Walker',
+  'Joaquin Niemann',
+  'Joe Highsmith',
+  'Joel Dahmen',
+  'John Keefer',
+  'Jon Rahm',
+  'Jordan Gumberg',
+  'Jordan Smith',
+  'Jordan Spieth',
+  'Justin Rose',
+  'Justin Thomas',
+  'Kazuki Higa',
+  'Keegan Bradley',
+  'Keith Mitchell',
+  'Kota Kaneko',
+  'Kristoffer Reitan',
+  'Kurt Kitayama',
+  'Ludvig Aberg',
+  'Luke Donald',
+  'Marco Penge',
+  'Martin Kaymer',
+  'Matt McCarty',
+  'Matt Wallace',
+  'Matthew Fitzpatrick',
+  'Matti Schmid',
+  'Maverick McNealy',
+  'Max Greyserman',
+  'Max Homa',
+  'Max McGreevy',
+  'Michael Block',
+  'Michael Brennan',
+  'Michael Kim',
+  'Michael Thorbjornsen',
+  'Mikael Lindberg',
+  'Min Woo Lee',
+  'Nick Taylor',
+  'Nico Echavarria',
+  'Nicolai Hojgaard',
+  'Padraig Harrington',
+  'Patrick Cantlay',
+  'Patrick Reed',
+  'Patrick Rodgers',
+  'Paul McClure',
+  'Pierceson Coody',
+  'Rasmus Hojgaard',
+  'Rasmus Neergaard-Petersen',
+  'Ricky Castillo',
+  'Rico Hoey',
+  'Robert MacIntyre',
+  'Rory McIlroy',
+  'Russell Henley',
+  'Ryan Fox',
+  'Ryan Gerard',
+  'Ryo Hisatsune',
+  'Sahith Theegala',
+  'Sam Burns',
+  'Sam Stevens',
+  'Sami Valimaki',
+  'Scottie Scheffler',
+  'Sepp Straka',
+  'Shane Lowry',
+  'Shaun Micheel',
+  'Si Woo Kim',
+  'Stephan Jaeger',
+  'Steven Fisk',
+  'Stewart Cink',
+  'Sudarshan Yellamaraju',
+  'Sungjae Im',
+  'Taylor Pendrith',
+  'Thomas Detry',
+  'Tom McKibbin',
+  'Tommy Fleetwood',
+  'Travis Smyth',
+  'Tyrrell Hatton',
+  'Viktor Hovland',
+  'William Mouw',
+  'Wyndham Clark',
+  'Xander Schauffele',
+  'Y.E. Yang'
 ].sort(function(a,b){return a.localeCompare(b,'en',{sensitivity:'base'});});
 
 var S={adminIn:false,liveEntries:[],pgaPlayers:[],tName:'',tStatus:'',round:0,leaderScore:null,lastUpdated:null,sbConnected:false};
@@ -489,9 +611,10 @@ async function lookupPreviousEntries(email){
   }catch(e){/* silent */}
 }
 
-/* ESPN FEED */
-async function tryESPN(eventId){
-  var url=ESPN_BASE+eventId;
+/* SCORE FEEDS */
+var PGA_FEED='https://www.pgachampionship.com/en_US/scores/feeds/2026/scores.json';
+
+async function tryFetch(url){
   var data=null;
   try{var r=await fetch(url);if(r.ok)data=await r.json();}catch(_){}
   if(!data){
@@ -499,39 +622,78 @@ async function tryESPN(eventId){
   }
   return data;
 }
+
+async function parsePGAFeed(data){
+  /* PGA Championship native feed - same structure as Masters */
+  if(!data||!data.data||!data.data.player)return false;
+  var d=data.data;
+  var statusRound=d.statusRound||'';
+  var pIdx=statusRound.indexOf('P');
+  var fCount=(statusRound.match(/F/g)||[]).length;
+  S.tName='PGA Championship';
+  S.tStatus=statusRound;
+  S.round=pIdx>=0?pIdx+1:Math.max(fCount,1);
+  S.pgaPlayers=d.player.map(function(p){
+    var topar=p.topar||'0';
+    var score=(topar==='E'||topar==='')?0:parseInt(topar)||0;
+    var missed=p.status==='C'||p.newStatus==='C'||p.status==='WD';
+    var thru=p.thru||'';
+    return {
+      displayName:p.full_name||p.display_name2||p.display_name||'',
+      score:score,scoreDisp:score===0?'E':score>0?'+'+score:String(score),
+      madeCut:!missed,detail:thru?'Thru '+thru:(p.teetime||'')
+    };
+  }).filter(function(p){return p.displayName;});
+  S.pgaPlayers.sort(function(a,b){return a.score-b.score;});
+  var leader=S.pgaPlayers.find(function(p){return p.madeCut;})||S.pgaPlayers[0];
+  S.leaderScore=leader?leader.score:null;
+  S.lastUpdated=new Date();
+  return true;
+}
+
+async function parseESPNFeed(data){
+  if(!data||!data.events||!data.events.length)return false;
+  var evt=data.events[0];
+  var comp=evt.competitions&&evt.competitions[0];if(!comp)return false;
+  var competitors=comp.competitors||[];if(!competitors.length)return false;
+  S.tName=evt.name||'PGA Championship';
+  var statusType=(comp.status&&comp.status.type&&comp.status.type.name)||'';
+  var period=(comp.status&&comp.status.period)||0;
+  S.round=period||1;
+  var completed=statusType==='STATUS_FINAL'||statusType==='STATUS_COMPLETE';
+  S.tStatus=completed?'FFFF':(period>0?'P':'');
+  S.pgaPlayers=competitors.map(function(c){
+    var athlete=c.athlete||{};
+    var name=athlete.displayName||athlete.fullName||'';
+    var scoreStr=c.score||'0';
+    var score=scoreStr==='E'||scoreStr===''?0:parseInt(scoreStr)||0;
+    var status=c.status||'';
+    var missed=status==='cut'||status==='wd'||status==='dq';
+    var thru=c.statistics&&c.statistics.find(function(s){return s.name==='thru';});
+    return {displayName:name,score:score,scoreDisp:score===0?'E':score>0?'+'+score:String(score),madeCut:!missed,detail:thru?'Thru '+thru.displayValue:''};
+  }).filter(function(p){return p.displayName;});
+  S.pgaPlayers.sort(function(a,b){return a.score-b.score;});
+  var leader=S.pgaPlayers.find(function(p){return p.madeCut;})||S.pgaPlayers[0];
+  S.leaderScore=leader?leader.score:null;
+  S.lastUpdated=new Date();
+  return true;
+}
+
 async function fetchScores(){
   try{
-    var data=null;
-    for(var i=0;i<ESPN_IDS.length;i++){
-      data=await tryESPN(ESPN_IDS[i]);
-      if(data&&data.events&&data.events.length)break;
-      data=null;
+    /* 1. Try PGA Championship official feed */
+    var pgaData=await tryFetch(PGA_FEED);
+    if(pgaData&&pgaData.data&&pgaData.data.player){
+      return await parsePGAFeed(pgaData);
     }
-    if(!data)return false;
-    var evt=data.events&&data.events[0];if(!evt)return false;
-    var comp=evt.competitions&&evt.competitions[0];if(!comp)return false;
-    var competitors=comp.competitors||[];if(!competitors.length)return false;
-    S.tName=evt.name||'PGA Championship';
-    var statusType=(comp.status&&comp.status.type&&comp.status.type.name)||'';
-    var period=(comp.status&&comp.status.period)||0;
-    S.round=period||1;
-    var completed=statusType==='STATUS_FINAL'||statusType==='STATUS_COMPLETE';
-    S.tStatus=completed?'FFFF':(period>0?'P':'');
-    S.pgaPlayers=competitors.map(function(c){
-      var athlete=c.athlete||{};
-      var name=athlete.displayName||athlete.fullName||'';
-      var scoreStr=c.score||'0';
-      var score=scoreStr==='E'||scoreStr===''?0:parseInt(scoreStr)||0;
-      var status=c.status||'';
-      var missed=status==='cut'||status==='wd'||status==='dq';
-      var thru=c.statistics&&c.statistics.find(function(s){return s.name==='thru';});
-      return {displayName:name,score:score,scoreDisp:score===0?'E':score>0?'+'+score:String(score),madeCut:!missed,detail:thru?'Thru '+thru.displayValue:''};
-    }).filter(function(p){return p.displayName;});
-    S.pgaPlayers.sort(function(a,b){return a.score-b.score;});
-    var leader=S.pgaPlayers.find(function(p){return p.madeCut;})||S.pgaPlayers[0];
-    S.leaderScore=leader?leader.score:null;
-    S.lastUpdated=new Date();
-    return true;
+    /* 2. Fall back to ESPN */
+    for(var i=0;i<ESPN_IDS.length;i++){
+      var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
+      if(espnData&&espnData.events&&espnData.events.length){
+        return await parseESPNFeed(espnData);
+      }
+    }
+    return false;
   }catch(e){return false;}
 }
 
