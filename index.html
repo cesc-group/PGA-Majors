@@ -681,16 +681,22 @@ async function parseESPNFeed(data){
 
 async function fetchScores(){
   try{
-    /* 1. Try PGA Championship official feed */
+    /* 1. Try PGA Championship official feed only - no ESPN fallback
+       ESPN returns whatever tournament is currently active, which may
+       not be the PGA Championship before May 14 */
     var pgaData=await tryFetch(PGA_FEED);
     if(pgaData&&pgaData.data&&pgaData.data.player){
       return await parsePGAFeed(pgaData);
     }
-    /* 2. Fall back to ESPN */
-    for(var i=0;i<ESPN_IDS.length;i++){
-      var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
-      if(espnData&&espnData.events&&espnData.events.length){
-        return await parseESPNFeed(espnData);
+    /* 2. ESPN fallback - only after PGA feed is confirmed live (May 14+) */
+    var now=new Date();
+    var pgaStart=new Date(2026,4,14,8,0,0);
+    if(now>=pgaStart){
+      for(var i=0;i<ESPN_IDS.length;i++){
+        var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
+        if(espnData&&espnData.events&&espnData.events.length){
+          return await parseESPNFeed(espnData);
+        }
       }
     }
     return false;
