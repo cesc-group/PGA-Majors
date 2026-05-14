@@ -685,12 +685,16 @@ async function parseESPNFeed(data){
   S.pgaPlayers=competitors.map(function(c){
     var athlete=c.athlete||{};
     var name=athlete.displayName||athlete.fullName||'';
-    var scoreStr=c.score||'0';
+    /* ESPN uses statistics array for to-par score */
+    var stats=c.statistics||[];
+    var toParStat=stats.find(function(s){return s.name==='toPar'||s.name==='topar'||s.abbreviation==='TOT';});
+    var scoreStr=toParStat?toParStat.displayValue:(c.score||'0');
     var score=scoreStr==='E'||scoreStr===''?0:parseInt(scoreStr)||0;
     var status=c.status||'';
-    var missed=status==='cut'||status==='wd'||status==='dq';
-    var thru=c.statistics&&c.statistics.find(function(s){return s.name==='thru';});
-    return {displayName:name,score:score,scoreDisp:score===0?'E':score>0?'+'+score:String(score),madeCut:!missed,detail:thru?'Thru '+thru.displayValue:''};
+    var missed=status==='cut'||status==='wd'||status==='dq'||status==='C';
+    var thruStat=stats.find(function(s){return s.name==='thru'||s.abbreviation==='THRU';});
+    var thru=thruStat?thruStat.displayValue:'';
+    return {displayName:name,score:score,scoreDisp:score===0?'E':score>0?'+'+score:String(score),madeCut:!missed,detail:thru?'Thru '+thru:''};
   }).filter(function(p){return p.displayName;});
   S.pgaPlayers.sort(function(a,b){return a.score-b.score;});
   var leader=S.pgaPlayers.find(function(p){return p.madeCut;})||S.pgaPlayers[0];
