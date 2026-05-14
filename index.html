@@ -694,7 +694,9 @@ async function parseESPNFeed(data){
     var statusName=(cStatus.type&&cStatus.type.name)||'';
     var missed=statusName==='STATUS_CUT'||statusName==='STATUS_DISQUALIFIED'||statusName==='STATUS_WITHDRAWN';
     var thru=cStatus.displayThru||'';
-    return {displayName:name,score:score,scoreDisp:score===0?'E':score>0?'+'+score:String(score),madeCut:!missed,detail:thru?'Thru '+thru:''};
+    var teeTime=cStatus.detail||'';
+    var detail=thru?'Thru '+thru:(teeTime||'');
+    return {displayName:name,score:score,scoreDisp:score===0?'E':score>0?'+'+score:String(score),madeCut:!missed,detail:detail};
   }).filter(function(p){return p.displayName;});
   S.pgaPlayers.sort(function(a,b){return a.score-b.score;});
   var leader=S.pgaPlayers.find(function(p){return p.madeCut;})||S.pgaPlayers[0];
