@@ -905,6 +905,7 @@ function adminLogin(){
     document.getElementById('adminLogin').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
     renderAdmin();
+    renderEntryForm();
   }else{alert('Incorrect password.');}
 }
 async function renderAdmin(){
