@@ -375,7 +375,7 @@ var PROXY='https://api.allorigins.win/get?url=';
 var POOL_URL='https://cesc-group.github.io/PGA-Majors/';
 var DEADLINE=new Date(2026,4,14,8,0,0);
 var TABS=['rules','enter','leaderboard','standings','field','admin'];
-var ESPN_IDS=['401580354','401663000','401663001'];
+var ESPN_IDS=['401811947','401580354'];
 var ESPN_BASE='https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=';
 
 var FIELD=[
@@ -673,6 +673,7 @@ async function parsePGAFeed(data){
 async function parseESPNFeed(data){
   if(!data||!data.events||!data.events.length)return false;
   var evt=data.events[0];
+
   var comp=evt.competitions&&evt.competitions[0];if(!comp)return false;
   var competitors=comp.competitors||[];if(!competitors.length)return false;
   S.tName=evt.name||'PGA Championship';
