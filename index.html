@@ -955,7 +955,7 @@ function renderLeaderboard(){
     return;
   }
   var rows=FIELD.map(function(name){return '<tr><td>--</td><td class="lb-name">'+name+'</td><td class="lb-even">--</td><td style="font-size:.72rem;color:var(--gray-400)">Scheduled</td></tr>';}).join('');
-  el.innerHTML='<div class="alert alert-info" style="margin-bottom:1.25rem">The 2026 PGA Championship begins <strong>May 14</strong> at Shinnecock Hills Golf Club, Southampton, NY. Scores update automatically once play begins.</div>'
+  el.innerHTML='<div class="alert alert-info" style="margin-bottom:1.25rem">The 2026 US Open begins <strong>June 18</strong> at Shinnecock Hills Golf Club, Southampton, NY. Scores update automatically once play begins.</div>'
     +'<div class="card"><div class="card-header"><h3>2026 US Open Field &mdash; '+FIELD.length+' Players</h3><span class="meta">Alphabetical &middot; Field finalizes May 14</span></div>'
     +'<div style="overflow-x:auto"><table class="lb-table"><thead><tr><th>--</th><th>Player</th><th>Score</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
 }
