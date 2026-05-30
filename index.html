@@ -491,15 +491,43 @@ async function lookupPreviousEntries(email){
     if(!rows||!rows.length)return;
     rows=rows.map(function(r){r.players=Array.isArray(r.players)?r.players:JSON.parse(r.players||'[]');return r;});
     var count=rows.length;
-    var rowsHtml=rows.map(function(e){
+    var canEdit=!isUnlocked();
+    var rowsHtml='';
+    rows.forEach(function(e){
       var picks=(e.players||[]).map(function(p){return '<span class="prev-pick">'+p+'</span>';}).join('');
       var alt=e.alternate?'<span class="prev-pick-alt">Alt: '+e.alternate+'</span>':'';
       var pay=e.payment_confirmed?'<span class="paid-tag">Paid</span>':'<span class="pending-tag">Pending</span>';
       var tb='TB: '+fmtPar(e.tiebreaker||0);
       var dt=new Date(e.submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      return '<div class="prev-entry-row"><div class="prev-entry-label">'+(e.entry_label||e.participant_name)+pay+'</div><div class="prev-entry-picks">'+picks+alt+'</div><div class="prev-entry-meta">'+tb+' &middot; Submitted '+dt+'</div></div>';
-    }).join('');
-    wrap.innerHTML='<div class="prev-panel"><div class="prev-panel-hdr"><span class="prev-panel-title">&#128203; You have '+count+' existing '+(count===1?'entry':'entries')+' for this email</span><span class="prev-panel-sub">Reference your picks below before selecting new ones</span></div>'+rowsHtml+'</div>';
+      var row=document.createElement('div');
+      row.className='prev-entry-row';
+      var labelDiv=document.createElement('div');
+      labelDiv.className='prev-entry-label';
+      labelDiv.style.cssText='display:flex;align-items:center;gap:8px;';
+      labelDiv.innerHTML=(e.entry_label||e.participant_name)+pay;
+      if(canEdit){
+        var editBtn=document.createElement('button');
+        editBtn.className='btn btn-sm btn-ghost';
+        editBtn.style.cssText='margin-left:auto;font-size:.68rem;padding:.25rem .65rem;';
+        editBtn.innerHTML='&#9998; Edit';
+        editBtn.setAttribute('data-id',e.id);
+        editBtn.addEventListener('click',function(){prefillEdit(this.getAttribute('data-id'));});
+        labelDiv.appendChild(editBtn);
+      }
+      var picksDiv=document.createElement('div');
+      picksDiv.className='prev-entry-picks';
+      picksDiv.innerHTML=picks+alt;
+      var metaDiv=document.createElement('div');
+      metaDiv.className='prev-entry-meta';
+      metaDiv.innerHTML=tb+' &middot; Submitted '+dt;
+      row.appendChild(labelDiv);row.appendChild(picksDiv);row.appendChild(metaDiv);
+      rowsHtml+=row.outerHTML;
+    });
+    wrap.innerHTML='<div class="prev-panel"><div class="prev-panel-hdr"><span class="prev-panel-title">&#128203; You have '+count+' existing '+(count===1?'entry':'entries')+' for this email</span><span class="prev-panel-sub">'+(canEdit?'Click Edit to modify a pick before the deadline':'Entries are closed &mdash; read only')+'</span></div>'+rowsHtml+'</div>';
+    /* Re-attach edit button listeners after innerHTML set */
+    wrap.querySelectorAll('[data-id]').forEach(function(btn){
+      btn.addEventListener('click',function(){prefillEdit(this.getAttribute('data-id'));});
+    });
     wrap.classList.remove('hidden');
   }catch(e){}
 }
@@ -700,6 +728,79 @@ function clearForm(){
   ['fName','fLabel','fEmail','fTB'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   for(var i=1;i<=5;i++)clearPick('ps_'+i);clearPick('ps_alt');
   var wrap=document.getElementById('prevEntriesWrap');if(wrap){wrap.classList.add('hidden');wrap.innerHTML='';}
+}
+
+/* SELF-SERVICE EDIT: pre-fill form with existing entry data */
+async function prefillEdit(id){
+  if(isUnlocked()){alert('Entries are closed — editing is no longer available.');return;}
+  /* Fetch the entry fresh from Supabase */
+  var rows=await sbFetch(DB_TABLE+'?id=eq.'+id+'&select=*');
+  if(!rows||!rows.length){alert('Entry not found.');return;}
+  var e=rows[0];
+  e.players=Array.isArray(e.players)?e.players:JSON.parse(e.players||'[]');
+  /* Scroll to form */
+  document.getElementById('enterCard').scrollIntoView({behavior:'smooth',block:'start'});
+  /* Fill name, label, email */
+  var nameEl=document.getElementById('fName');if(nameEl)nameEl.value=e.participant_name||'';
+  var labelEl=document.getElementById('fLabel');if(labelEl)labelEl.value=e.entry_label||'';
+  var tbEl=document.getElementById('fTB');if(tbEl)tbEl.value=e.tiebreaker||0;
+  /* Fill picks */
+  for(var i=1;i<=5;i++){
+    var name=e.players[i-1]||'';
+    clearPick('ps_'+i);
+    if(name)selectPick('ps_'+i,name);
+  }
+  /* Fill alternate */
+  clearPick('ps_alt');
+  if(e.alternate)selectPick('ps_alt',e.alternate);
+  /* Switch submit button to update mode */
+  var btn=document.getElementById('submitBtn');
+  btn.textContent='Save Changes';
+  btn.onclick=function(){updateExistingEntry(id);};
+  /* Show info alert */
+  var successEl=document.getElementById('entrySuccess');
+  successEl.innerHTML='<div><strong>&#9998; Editing entry: '+(e.entry_label||e.participant_name)+'</strong>'
+    +' &mdash; make your changes and click Save Changes.'
+    +' <button class="btn btn-ghost btn-sm" style="margin-left:8px;" onclick="resetSubmitBtn()">Cancel</button></div>';
+  successEl.classList.remove('hidden');
+}
+
+function resetSubmitBtn(){
+  var btn=document.getElementById('submitBtn');
+  btn.textContent='Submit Entry';
+  btn.onclick=function(){submitEntry();};
+  document.getElementById('entrySuccess').classList.add('hidden');
+}
+
+async function updateExistingEntry(id){
+  if(isUnlocked()){alert('Entries are closed.');return;}
+  var players=[];
+  for(var i=1;i<=5;i++){var v=document.getElementById('ps_'+i+'_val');if(v&&v.value)players.push(v.value);}
+  if(players.length<3){alert('Please select at least 3 players.');return;}
+  if(new Set(players).size!==players.length){alert('Please pick different players.');return;}
+  var tbVal=document.getElementById('fTB').value;
+  var tb=parseInt(tbVal,10);
+  if(tbVal===''||isNaN(tb)){alert('Please enter a valid tiebreaker.');return;}
+  var label=document.getElementById('fLabel').value.trim();
+  var altEl=document.getElementById('ps_alt_val');
+  var alt=altEl?altEl.value:'';
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Saving...';
+  try{
+    await updateEntry(id,{players:players,alternate:alt,tiebreaker:tb,entry_label:label});
+    resetSubmitBtn();
+    var email=document.getElementById('fEmail').value.trim();
+    lookupPreviousEntries(email);
+    var successEl=document.getElementById('entrySuccess');
+    successEl.innerHTML='<strong>&#10003; Entry updated successfully!</strong>';
+    successEl.classList.remove('hidden');
+    setTimeout(function(){successEl.classList.add('hidden');},5000);
+  }catch(e){
+    var errEl=document.getElementById('entryError');
+    errEl.textContent='Error updating entry: '+e.message;
+    errEl.classList.remove('hidden');
+  }
+  btn.disabled=false;
 }
 async function submitEntry(){
   var name=document.getElementById('fName').value.trim();
