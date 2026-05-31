@@ -940,7 +940,10 @@ async function renderStandings(){
   var tbNote=!isFinal&&hasScores?'<div class="alert alert-info" style="margin-top:1rem">Tiebreaker only activates once the tournament is final.</div>':'';
   document.getElementById('standingsContent').innerHTML=prizeH
     +'<div class="card"><div class="card-header"><h3>Full Standings &mdash; '+entries.length+' entries &mdash; '+roundLabel+' &mdash; '+sortLabel+'</h3>'+winRef+'</div>'
-    +'<div style="padding:.75rem 1.25rem;border-bottom:1px solid var(--gray-100)"><input type="text" id="standingsSearch" class="form-control" placeholder="Search by name or entry..." oninput="filterStandings()" style="max-width:320px"></div>'
+    +'<div style="padding:.75rem 1.25rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">'
+    +'<input type="text" id="standingsSearch" class="form-control" placeholder="Search by name or entry..." oninput="filterStandings()" style="max-width:280px">'
+    +'<button class="btn btn-ghost btn-sm" onclick="exportStandings()" style="margin-left:auto;">&#8681; Who Has Who</button>'
+    +'</div>'
     +'<div style="overflow-x:auto"><table class="standings-table"><thead><tr><th>Rank</th><th>Entry</th><th>Score</th><th>'+tbHeader+'</th><th>Picks</th></tr></thead><tbody id="standingsBody">'+rows+'</tbody></table></div></div>'
     +cutNote+tbNote;
 }
@@ -1163,6 +1166,36 @@ async function delEntry(id){
   if(!confirm('Delete this entry? This cannot be undone.'))return;
   try{await deleteEntry(id);}catch(e){alert('Error: '+e.message);return;}
   renderAdmin();
+}
+
+
+/* PUBLIC STANDINGS EXPORT */
+function exportStandings(){
+  var entries=S.liveEntries;
+  if(!entries||!entries.length){alert('No entries to export.');return;}
+  var hasScores=S.pgaPlayers.length>0&&S.pgaPlayers.some(function(p){return p.score!==0;});
+  var st=hasScores?calcStandings(entries):sortAlpha(entries).map(function(e,i){return Object.assign({},e,{rank:null,qualifies:false,totalScore:null,results:[],best3:[]});});
+  var NL=String.fromCharCode(10);
+  var headers=['Rank','Entry','Participant','Pick 1','Score 1','Pick 2','Score 2','Pick 3','Score 3','Pick 4','Score 4','Pick 5','Score 5','Best 3 Total','Qualifies'];
+  var rows=st.map(function(e){
+    var picks=e.players||[];
+    var results=e.results||[];
+    var cols=[e.rank?String(e.rank):'--',e.entry_label||e.participant_name,e.participant_name];
+    for(var i=0;i<5;i++){
+      var name=picks[i]||'';
+      var r=results.find(function(x){return x.name===name;});
+      var score=r&&r.found?(r.scoreDisp||'--'):'--';
+      cols.push(name);cols.push(score);
+    }
+    cols.push(e.qualifies&&e.totalScore!==null?fmtPar(e.totalScore):'DNQ');
+    cols.push(e.qualifies?'Yes':'No');
+    return cols.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');
+  });
+  var round=S.round>0?'Round '+S.round:'Pre-Tournament';
+  var updated=S.lastUpdated?S.lastUpdated.toLocaleString():'Not yet updated';
+  var csv='"2026 US Open Pool - Who Has Who"'+NL+'"Generated: '+updated+' - '+round+'"'+NL+'""'+NL+headers.map(function(h){return '"'+h+'"';}).join(',')+NL+rows.join(NL);
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='usopen2026-who-has-who.csv';a.click();
 }
 
 /* ROUTING */
