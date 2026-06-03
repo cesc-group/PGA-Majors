@@ -164,6 +164,9 @@ input,select{font-family:inherit;}
 .ibar{display:inline-block;vertical-align:middle;background:var(--gray-100);border-radius:3px;height:5px;width:100px;overflow:hidden;margin-left:8px;}
 .ibar-fill{height:100%;border-radius:3px;background:var(--navy);}
 .tag{font-size:.72rem;color:var(--gray-500);background:var(--gray-100);padding:3px 10px;border-radius:20px;display:inline-block;}
+.row-own{background:linear-gradient(90deg,rgba(191,13,62,.12),transparent 70%)!important;}
+.row-own .entry-name{color:var(--navy);font-weight:700;}
+.row-own td:first-child::after{content:' ◄';color:#BF0D3E;font-size:.65rem;}
 .prev-panel{border:2px solid var(--navy);border-radius:var(--radius);margin-bottom:1.25rem;overflow:hidden;background:#fff;box-shadow:var(--shadow);}
 .prev-panel-hdr{background:var(--navy);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
 .prev-panel-title{color:#fff;font-size:.83rem;font-weight:700;display:flex;align-items:center;gap:8px;}
@@ -795,8 +798,18 @@ function renderEntryForm(){
   var emailEl=document.getElementById('fEmail');
   if(emailEl){
     if(emailEl._blurHandler)emailEl.removeEventListener('blur',emailEl._blurHandler);
-    emailEl._blurHandler=function(){lookupPreviousEntries(emailEl.value.trim());};
+    emailEl._blurHandler=function(){
+      var em=emailEl.value.trim();
+      if(em&&validEmail(em))localStorage.setItem('pool_email',em);
+      lookupPreviousEntries(em);
+    };
     emailEl.addEventListener('blur',emailEl._blurHandler);
+    /* Restore saved email */
+    var savedEmail=localStorage.getItem('pool_email');
+    if(savedEmail&&!emailEl.value){
+      emailEl.value=savedEmail;
+      lookupPreviousEntries(savedEmail);
+    }
   }
 }
 function clearForm(){
@@ -1002,6 +1015,9 @@ async function renderStandings(){
     }).join('');
     var lname=e.entry_label||e.participant_name;
     var sub=(e.entry_label&&e.entry_label!==e.participant_name)?'<div class="entry-sub">'+e.participant_name+'</div>':'';
+    var myEmail=localStorage.getItem('pool_email')||'';
+    var isOwn=myEmail&&e.email&&e.email.toLowerCase()===myEmail.toLowerCase();
+    if(isOwn)trC=trC?trC+' row-own':'row-own';
     rows+='<tr class="'+trC+'"><td style="width:48px">'+rb+'</td><td><div class="entry-name">'+lname+pb+'</div>'+sub+'</td><td style="width:80px">'+sc+'</td><td style="width:80px;color:var(--gray-400);font-size:.77rem">'+fmtPar(e.tiebreaker||0)+'</td><td><div class="picks-row">'+picks+'</div></td></tr>';
   });
   var cutNote=S.round<3&&hasScores?'<div class="alert alert-info" style="margin-top:1rem">Cut not yet applied &mdash; standings preliminary until Round 2 complete.</div>':'';
