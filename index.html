@@ -311,16 +311,16 @@ input,select{font-family:inherit;}
             <span><strong>Deadline: Thu Jun 18 &middot; 8:00 AM EST</strong> &mdash; $25 via Zelle (201) 213-7212 or Venmo @Jeff-Arnold-223 to Jeff Arnold.</span>
           </div>
           <div class="form-grid-3">
+            <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" class="form-control" id="fEmail" placeholder="you@email.com"></div>
             <div class="form-group"><label class="form-label">Your Name <span class="req">*</span></label><input type="text" class="form-control" id="fName" placeholder="Full name"></div>
             <div class="form-group"><label class="form-label">Entry Label <span style="font-weight:400;color:var(--gray-400)">(optional)</span></label><input type="text" class="form-control" id="fLabel" placeholder="e.g. Team 2"></div>
-            <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" class="form-control" id="fEmail" placeholder="you@email.com"></div>
           </div>
           <hr class="form-divider">
           <p style="font-size:.82rem;font-weight:700;color:var(--gray-900);margin-bottom:.85rem">Your 5 Picks &mdash; type to search</p>
           <div class="picks-grid" id="picksContainer"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.85rem">
             <div class="form-group">
-              <label class="form-label">Alternate</label>
+              <label class="form-label">Alternate <span class="req">*</span></label>
               <div id="altWrap"></div>
               <span class="form-text">Used only if a pick withdraws before teeing off.</span>
             </div>
@@ -791,7 +791,7 @@ function renderEntryForm(){
   for(var i=1;i<=5;i++){
     var div=document.createElement('div');div.className='form-group';
     var lbl=document.createElement('label');lbl.className='form-label';
-    lbl.innerHTML='Pick '+i+(i<=3?' <span class="req">*</span>':'');
+    lbl.innerHTML='Pick '+i+' <span class="req">*</span>';
     div.appendChild(lbl);div.appendChild(buildSearchWidget('ps_wrap_'+i,i));c.appendChild(div);
   }
   var aw=document.getElementById('altWrap');aw.innerHTML='';aw.appendChild(buildSearchWidget('ps_alt_wrap','alt'));
@@ -864,7 +864,7 @@ async function updateExistingEntry(id){
   if(isUnlocked()){alert('Entries are closed.');return;}
   var players=[];
   for(var i=1;i<=5;i++){var v=document.getElementById('ps_'+i+'_val');if(v&&v.value)players.push(v.value);}
-  if(players.length<3){alert('Please select at least 3 players.');return;}
+  if(players.length<5){alert('Please select all 5 players.');return;}
   if(new Set(players).size!==players.length){alert('Please pick different players.');return;}
   var tbVal=document.getElementById('fTB').value;
   var tb=parseInt(tbVal,10);
@@ -872,6 +872,7 @@ async function updateExistingEntry(id){
   var label=document.getElementById('fLabel').value.trim();
   var altEl=document.getElementById('ps_alt_val');
   var alt=altEl?altEl.value:'';
+  if(!alt){alert('Please select an alternate player.');return;}
   var btn=document.getElementById('submitBtn');
   btn.disabled=true;btn.textContent='Saving...';
   try{
@@ -897,7 +898,7 @@ async function submitEntry(){
   if(!validEmail(email)){alert('Please enter a valid email address.');return;}
   var players=[];
   for(var i=1;i<=5;i++){var v=document.getElementById('ps_'+i+'_val');if(v&&v.value)players.push(v.value);}
-  if(players.length<3){alert('Please select at least 3 players.');return;}
+  if(players.length<5){alert('Please select all 5 players.');return;}
   if(new Set(players).size!==players.length){alert('Please pick different players.');return;}
   var tbVal=document.getElementById('fTB').value;var tb=parseInt(tbVal,10);
   if(tbVal===''||isNaN(tb)){alert('Please enter a valid tiebreaker (e.g. -12).');return;}
@@ -1200,7 +1201,7 @@ function openEdit(id){
     +'</div><hr class="form-divider">'
     +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-bottom:.75rem">'+pickSelects+'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">'
-    +'<div class="form-group"><label class="form-label">Alternate</label><select class="form-select" id="ep_alt">'+altOpts+'</select></div>'
+    +'<div class="form-group"><label class="form-label">Alternate <span class="req">*</span></label><select class="form-select" id="ep_alt">'+altOpts+'</select></div>'
     +'<div class="form-group"><label class="form-label">Tiebreaker</label><input type="number" class="form-control" id="ep_tb" value="'+(e.tiebreaker||0)+'" min="-30" max="30"></div>'
     +'</div>'
     +'<div style="display:flex;gap:.75rem;flex-wrap:wrap">'
