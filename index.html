@@ -303,12 +303,12 @@ input,select{font-family:inherit;}
       <div class="card" id="enterCard">
         <div class="card-header">
           <h3>Submit Entry &mdash; 2026 US Open</h3>
-          <span class="meta">Closes Thu Jun 18 &middot; 8:00 AM EST</span>
+          <span class="meta">Closes Thu Jun 18 &middot; 7:00 AM EST</span>
         </div>
         <div style="padding:1.25rem 1.5rem;overflow:visible">
           <div class="alert alert-warning">
             <span>&#128179;</span>
-            <span><strong>Deadline: Thu Jun 18 &middot; 8:00 AM EST</strong> &mdash; $25 via Zelle (201) 213-7212 or Venmo @Jeff-Arnold-223 to Jeff Arnold.</span>
+            <span><strong>Deadline: Thu Jun 18 &middot; 7:00 AM EST</strong> &mdash; $25 via Zelle (201) 213-7212 or Venmo @Jeff-Arnold-223 to Jeff Arnold.</span>
           </div>
           <div class="form-grid-3">
             <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" class="form-control" id="fEmail" placeholder="you@email.com"></div>
@@ -348,11 +348,11 @@ input,select{font-family:inherit;}
     <div class="tab-pane" id="tab-field">
       <div id="fieldContent">
         <div class="card">
-          <div class="card-header"><h3>Field Analysis</h3><span class="meta">Unlocks Thu Jun 18 &middot; 8:00 AM EST</span></div>
+          <div class="card-header"><h3>Field Analysis</h3><span class="meta">Unlocks Thu Jun 18 &middot; 7:00 AM EST</span></div>
           <div style="padding:3rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;text-align:center">
             <div style="font-size:2rem">&#128274;</div>
             <p style="font-size:1.05rem;font-weight:700;color:var(--gray-900)">Field analysis unlocks Thursday</p>
-            <p style="font-size:.78rem;color:var(--gray-500);padding:.45rem 1rem">Thursday June 18, 2026 &middot; 8:00 AM EST</p>
+            <p style="font-size:.78rem;color:var(--gray-500);padding:.45rem 1rem">Thursday June 18, 2026 &middot; 7:00 AM EST</p>
           </div>
         </div>
       </div>
@@ -397,7 +397,7 @@ var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 var DB_TABLE='entries_usopen2026';
 var PROXY='https://api.allorigins.win/get?url=';
 var POOL_URL='https://cesc-group.github.io/PGA-Majors/';
-var DEADLINE=new Date(2026,5,18,8,0,0);
+var DEADLINE=new Date(2026,5,18,7,0,0);
 var TABS=['rules','enter','leaderboard','standings','field','admin'];
 var ESPN_IDS=['401811948','401811947'];
 var ESPN_BASE='https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=';
@@ -670,7 +670,7 @@ async function fetchScores(){
     var pgaData=await tryFetch(PGA_FEED);
     if(pgaData&&pgaData.data&&pgaData.data.player)return await parsePGAFeed(pgaData);
     var now=new Date();
-    if(now>=new Date(2026,5,18,8,0,0)){
+    if(now>=new Date(2026,5,18,7,0,0)){
       for(var i=0;i<ESPN_IDS.length;i++){
         var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
         if(espnData&&espnData.events&&espnData.events.length)return await parseESPNFeed(espnData);
@@ -782,7 +782,7 @@ function renderEntryForm(){
     el.innerHTML='<div class="card-header"><h3>Submit Entry &mdash; 2026 US Open</h3><span class="meta">Closed</span></div>'
       +'<div style="padding:3rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;text-align:center">'
       +'<p style="font-size:1.05rem;font-weight:700;color:var(--gray-900)">Entries are closed</p>'
-      +'<p style="font-size:.83rem;color:var(--gray-500);line-height:1.6;max-width:300px">The submission deadline was Thursday June 18 at 8:00 AM EST.</p>'
+      +'<p style="font-size:.83rem;color:var(--gray-500);line-height:1.6;max-width:300px">The submission deadline was Thursday June 18 at 7:00 AM EST.</p>'
       +'<p style="font-size:.78rem;color:var(--gray-500);background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:.45rem 1rem">Check the Standings tab to follow your picks.</p>'
       +'</div>';
     return;
@@ -933,7 +933,7 @@ function buildLockedStandings(entries){
   var total=paidCount*CFG.ENTRY_FEE;
   var first=Math.floor(total*0.70);var second=Math.floor(total*0.20);var third=Math.floor(total*0.10);
   var diff=DEADLINE-new Date();if(diff<0)diff=0;
-  var h='<div class="card"><div class="card-header"><h3>Standings</h3><span class="meta">Unlocks Thu Jun 18 at 8:00 AM EST</span></div>';
+  var h='<div class="card"><div class="card-header"><h3>Standings</h3><span class="meta">Unlocks Thu Jun 18 at 7:00 AM EST</span></div>';
   h+='<div style="padding:2.5rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;text-align:center">';
   h+='<div style="font-size:2.5rem">&#127942;</div>';
   h+='<p style="font-size:1.05rem;font-weight:700;color:var(--gray-900)">Picks are sealed until Thursday</p>';
@@ -952,7 +952,7 @@ function buildLockedStandings(entries){
     var val=[pad2(diff/86400000),pad2((diff%86400000)/3600000),pad2((diff%3600000)/60000),pad2((diff%60000)/1000)][i];
     h+='<div style="background:var(--navy);border-radius:var(--radius-sm);padding:.6rem .85rem;text-align:center"><div style="font-size:1.3rem;font-weight:700;color:#fff" id="'+id+'">'+val+'</div><div style="font-size:.65rem;text-transform:uppercase;color:rgba(255,255,255,.5)">'+lbl+'</div></div>';
   });
-  h+='</div><p style="font-size:.78rem;color:var(--gray-500);background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:.5rem 1rem">Still need to submit? Entries close <strong>Thu Jun 18 at 8:00 AM EST</strong></p>';
+  h+='</div><p style="font-size:.78rem;color:var(--gray-500);background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:.5rem 1rem">Still need to submit? Entries close <strong>Thu Jun 18 at 7:00 AM EST</strong></p>';
   h+='</div></div>';return h;
 }
 function filterStandings(){
