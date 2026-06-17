@@ -647,6 +647,13 @@ async function lookupPreviousEntries(email){
         editBtn.setAttribute('data-id',e.id);
         editBtn.addEventListener('click',function(){prefillEdit(this.getAttribute('data-id'));});
         labelDiv.appendChild(editBtn);
+        var delBtn=document.createElement('button');
+        delBtn.className='btn btn-sm btn-danger';
+        delBtn.style.cssText='font-size:.68rem;padding:.25rem .65rem;';
+        delBtn.innerHTML='&#128465; Delete';
+        delBtn.setAttribute('data-id',e.id);
+        delBtn.addEventListener('click',function(){selfDeleteEntry(this.getAttribute('data-id'),email);});
+        labelDiv.appendChild(delBtn);
       }
       var picksDiv=document.createElement('div');
       picksDiv.className='prev-entry-picks';
@@ -874,6 +881,16 @@ function clearForm(){
   var wrap=document.getElementById('prevEntriesWrap');if(wrap){wrap.classList.add('hidden');wrap.innerHTML='';}
 }
 
+/* SELF-SERVICE DELETE */
+async function selfDeleteEntry(id,email){
+  if(isUnlocked()){alert('Entries are closed \u2014 deleting is no longer available.');return;}
+  if(!confirm('Delete this entry? This cannot be undone.'))return;
+  try{
+    await deleteEntry(id);
+    lookupPreviousEntries(email);
+  }catch(e){alert('Error deleting entry: '+e.message);}
+}
+
 /* SELF-SERVICE EDIT: pre-fill form with existing entry data */
 async function prefillEdit(id){
   if(isUnlocked()){alert('Entries are closed — editing is no longer available.');return;}
@@ -904,7 +921,7 @@ async function prefillEdit(id){
   /* Show info alert */
   var successEl=document.getElementById('entrySuccess');
   successEl.innerHTML='<div><strong>&#9998; Editing entry: '+(e.entry_label||e.participant_name)+'</strong>'
-    +' &mdash; make your changes and click Save Changes.'
+    +' &mdash; make your changes, then click the <strong>Save Changes</strong> button below (do not click Submit Entry again, or it will create a duplicate).'
     +' <button class="btn btn-ghost btn-sm" style="margin-left:8px;" onclick="resetSubmitBtn()">Cancel</button></div>';
   successEl.classList.remove('hidden');
 }
