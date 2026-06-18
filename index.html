@@ -397,7 +397,7 @@ var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 var DB_TABLE='entries_usopen2026';
 var PROXY='https://api.allorigins.win/get?url=';
 var POOL_URL='https://cesc-group.github.io/PGA-Majors/';
-var DEADLINE=new Date(2026,5,18,7,0,0);
+var DEADLINE=new Date('2026-06-18T11:00:00Z'); /* 7:00 AM EDT = 11:00 UTC (fixed regardless of viewer's timezone) */
 var TABS=['rules','enter','leaderboard','standings','field','admin'];
 var ESPN_IDS=['401811952'];
 var ESPN_BASE='https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=';
@@ -733,7 +733,7 @@ async function fetchScores(){
     var pgaData=await tryFetch(PGA_FEED);
     if(pgaData&&pgaData.data&&pgaData.data.player)return await parsePGAFeed(pgaData);
     var now=new Date();
-    if(now>=new Date(2026,5,18,7,0,0)){
+    if(now>=new Date('2026-06-18T11:00:00Z')){
       for(var i=0;i<ESPN_IDS.length;i++){
         var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
         if(espnData&&espnData.events&&espnData.events.length)return await parseESPNFeed(espnData);
