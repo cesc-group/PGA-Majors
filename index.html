@@ -758,7 +758,8 @@ function scoreEntry(entry){
     var p=findPlayer(name);
     return {name:name,found:!!p,score:p?p.score:null,madeCut:p?p.madeCut:true,scoreDisp:p?p.scoreDisp:'--'};
   });
-  var cutApplied=S.round>=3||isTournamentFinal();
+  var anyPlayerCut=S.pgaPlayers.some(function(p){return !p.madeCut;});
+  var cutApplied=S.round>=3||isTournamentFinal()||anyPlayerCut;
   var eligible=cutApplied?results.filter(function(r){return r.found&&r.madeCut;}):results.filter(function(r){return r.found;});
   if(eligible.length<3)return {results:results,totalScore:null,qualifies:false,best3:[]};
   var sorted=eligible.slice().sort(function(a,b){return a.score-b.score;});
