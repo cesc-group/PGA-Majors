@@ -684,14 +684,18 @@ async function parseESPNFeed(data){
 }
 async function fetchScores(){
   try{
+    /* Skip all network calls entirely before the tournament starts -
+       theopen.com feed doesn't exist yet and ESPN has no event data,
+       so attempting either just wastes time on doomed fetches + proxy fallback */
+    var now=new Date();
+    var tourneyStart=new Date('2026-07-16T05:30:00Z');
+    if(now<tourneyStart)return false;
+
     var pgaData=await tryFetch(PGA_FEED);
     if(pgaData&&pgaData.data&&pgaData.data.player)return await parsePGAFeed(pgaData);
-    var now=new Date();
-    if(now>=new Date('2026-07-16T05:30:00Z')){
-      for(var i=0;i<ESPN_IDS.length;i++){
-        var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
-        if(espnData&&espnData.events&&espnData.events.length)return await parseESPNFeed(espnData);
-      }
+    for(var i=0;i<ESPN_IDS.length;i++){
+      var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
+      if(espnData&&espnData.events&&espnData.events.length)return await parseESPNFeed(espnData);
     }
     return false;
   }catch(e){return false;}
