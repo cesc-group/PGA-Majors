@@ -233,6 +233,8 @@ input,select{font-family:inherit;}
     <button class="nav-btn" data-tab="enter" onclick="showTab('enter')">Enter Picks</button>
     <button class="nav-btn" data-tab="leaderboard" onclick="showTab('leaderboard')">Leaderboard</button>
     <button class="nav-btn" data-tab="standings" onclick="showTab('standings')">Standings</button>
+    <button class="nav-btn" data-tab="hof" onclick="showTab('hof')">Hall of Fame</button>
+    <button class="nav-btn" data-tab="updates" onclick="showTab('updates')">Updates</button>
     <button class="nav-btn" data-tab="field" onclick="showTab('field')">Field Analysis</button>
     <button class="nav-btn" data-tab="admin" onclick="showTab('admin')">Admin</button>
   </div>
@@ -282,7 +284,8 @@ input,select{font-family:inherit;}
             <li>Need <strong>3 picks to make the cut</strong> to qualify.</li>
             <li>The <strong>best 3 scores</strong> (lowest to par) count.</li>
             <li>Entry with the <strong>lowest combined score wins</strong>.</li>
-            <li><strong>Ties</strong> broken by closest tiebreaker to winner's final score &mdash; only at tournament end.</li>
+            <li><strong>1st place ties</strong> broken by closest tiebreaker to winner's final score &mdash; only at tournament end.</li>
+            <li><strong>2nd &amp; 3rd place ties</strong> split the prize evenly between tied entries.</li>
           </ul>
           <h4>Prize Pool &mdash; $25 per entry</h4>
           <ul>
@@ -345,7 +348,137 @@ input,select{font-family:inherit;}
     <div class="tab-pane" id="tab-standings">
       <div id="standingsContent"><div class="loading-state"><div class="spinner"></div></div></div>
     </div>
-    <div class="tab-pane" id="tab-field">
+    <div class="tab-pane" id="
+<div class="tab-pane" id="tab-hof" style="padding:2rem 0;">
+  <div class="container" style="max-width:900px;">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--navy);margin-bottom:.25rem;">Hall of Fame</h2>
+    <p style="color:var(--gray-500);font-size:.85rem;margin-bottom:2rem;">Pool champions across all majors — one winner crowned per tournament.</p>
+    <div id="hof-grid" style="display:grid;gap:1.5rem;">
+
+      <div class="card" style="border-left:4px solid #006600;padding:1.25rem 1.5rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+          <span style="font-size:1.6rem;">&#127807;</span>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--gray-500);text-transform:uppercase;">2026 Masters Tournament</div>
+            <div style="font-size:.8rem;color:var(--gray-400);">Augusta National &middot; April 10&ndash;13, 2026</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <div style="font-size:.72rem;color:var(--gray-500);">Golf Winner</div>
+            <div style="font-weight:700;color:var(--navy);font-size:.9rem;">Rory McIlroy</div>
+          </div>
+        </div>
+        <div style="background:var(--gray-50);border-radius:8px;padding:1rem;display:flex;align-items:center;gap:1rem;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#006600;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">&#127942;</div>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;color:#006600;text-transform:uppercase;">Pool Champion</div>
+            <div style="font-size:1.05rem;font-weight:700;color:var(--navy);">Joaquin Mercado</div>
+            <div style="font-size:.78rem;color:var(--gray-500);">Tiebreaker -12 &middot; 3 winning entries &middot; $2,981.25</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <div style="font-size:.72rem;color:var(--gray-500);">Entries</div>
+            <div style="font-weight:700;font-size:1rem;color:var(--navy);">160</div>
+            <div style="font-size:.7rem;color:var(--gray-400);">record</div>
+          </div>
+        </div>
+        <div style="margin-top:.6rem;font-size:.75rem;color:var(--gray-400);">Also: Elio Duarte tied for 1st &mdash; tiebreaker awarded Joaquin the title &middot; Elio received $993.75</div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #B8902A;padding:1.25rem 1.5rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+          <span style="font-size:1.6rem;">&#9971;</span>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--gray-500);text-transform:uppercase;">2026 PGA Championship</div>
+            <div style="font-size:.8rem;color:var(--gray-400);">Aronimink Golf Club &middot; May 14&ndash;17, 2026</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <div style="font-size:.72rem;color:var(--gray-500);">Golf Winner</div>
+            <div style="font-weight:700;color:var(--navy);font-size:.9rem;">Aaron Rai</div>
+          </div>
+        </div>
+        <div style="background:var(--gray-50);border-radius:8px;padding:1rem;display:flex;align-items:center;gap:1rem;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#B8902A;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">&#127942;</div>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;color:#B8902A;text-transform:uppercase;">Pool Champion</div>
+            <div style="font-size:1.05rem;font-weight:700;color:var(--navy);">Steven Sabo</div>
+            <div style="font-size:.78rem;color:var(--gray-500);">Solo 1st &middot; Picked Aaron Rai (dark horse of the decade) &middot; Won 70% of pool</div>
+          </div>
+        </div>
+        <div style="margin-top:.6rem;font-size:.75rem;color:var(--gray-400);">Also: Craig Mygatt &amp; Mike Reilley tied for 2nd &mdash; split the remaining 30% evenly</div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #003087;padding:1.25rem 1.5rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+          <span style="font-size:1.6rem;">&#127805;</span>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--gray-500);text-transform:uppercase;">2026 US Open</div>
+            <div style="font-size:.8rem;color:var(--gray-400);">Shinnecock Hills &middot; June 18&ndash;21, 2026</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <div style="font-size:.72rem;color:var(--gray-500);">Golf Winner</div>
+            <div style="font-weight:700;color:var(--navy);font-size:.9rem;">Wyndham Clark</div>
+          </div>
+        </div>
+        <div style="background:var(--gray-50);border-radius:8px;padding:1rem;display:flex;align-items:center;gap:1rem;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#003087;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">&#127942;</div>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;color:#003087;text-transform:uppercase;">Pool Champion</div>
+            <div style="font-size:1.05rem;font-weight:700;color:var(--navy);">Hady Jawhar</div>
+            <div style="font-size:.78rem;color:var(--gray-500);">Solo 1st &middot; Won 70% of pool</div>
+          </div>
+        </div>
+        <div style="margin-top:.6rem;font-size:.75rem;color:var(--gray-400);">Also: Solo 2nd place &middot; 2-way tie for 3rd</div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #B8902A;padding:1.25rem 1.5rem;background:linear-gradient(135deg,#0B1F33 0%,#1a3550 100%);color:white;">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+          <span style="font-size:1.6rem;">&#127183;</span>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#B8902A;text-transform:uppercase;">2026 The Open Championship</div>
+            <div style="font-size:.8rem;color:rgba(255,255,255,.6);">Royal Birkdale &middot; July 16&ndash;19, 2026</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span style="background:#B8902A;color:white;font-size:.65rem;font-weight:700;padding:.2rem .6rem;border-radius:20px;letter-spacing:.05em;">UP NEXT</span>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:1rem;display:flex;align-items:center;gap:1rem;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#B8902A;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">&#9971;</div>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;color:#B8902A;text-transform:uppercase;">Champion TBD</div>
+            <div style="font-size:.85rem;color:rgba(255,255,255,.7);">Tournament begins July 16 &mdash; come back for the winner</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="tab-pane" id="tab-updates" style="padding:2rem 0;">
+  <div class="container" style="max-width:780px;">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem;">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--navy);margin-bottom:.2rem;">Commissioner's Corner</h2>
+        <p style="color:var(--gray-400);font-size:.82rem;margin:0;">Joe's tournament updates &mdash; posted live during the week</p>
+      </div>
+    </div>
+    <div id="upd-compose" style="display:none;background:var(--navy);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:2rem;">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#B8902A;text-transform:uppercase;margin-bottom:.75rem;">Post an Update</div>
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:.75rem;margin-bottom:.75rem;">
+        <input id="upd-major" class="form-control" placeholder="Major" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2);" value="2026 The Open">
+        <input id="upd-title" class="form-control" placeholder="Title (e.g. Friday Night Update)" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2);">
+      </div>
+      <textarea id="upd-body" class="form-control" rows="6" placeholder="Write your update here..." style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2);resize:vertical;font-family:inherit;"></textarea>
+      <div style="margin-top:.75rem;display:flex;gap:.75rem;align-items:center;">
+        <button id="upd-submit" class="btn btn-primary" onclick="submitUpdate()">Post Update</button>
+        <span style="font-size:.75rem;color:rgba(255,255,255,.4);">Visible to all participants immediately</span>
+      </div>
+    </div>
+    <div id="updatesContent"><div class="loading-state">Loading...</div></div>
+  </div>
+</div>
+
+<div id="tab-field">
       <div id="fieldContent">
         <div class="card">
           <div class="card-header"><h3>Field Analysis</h3><span class="meta">Unlocks Thu Jul 16 &middot; 1:30 AM EST</span></div>
@@ -398,7 +531,7 @@ var DB_TABLE='entries_open2026';
 var PROXY='https://api.allorigins.win/get?url=';
 var POOL_URL='https://cesc-group.github.io/PGA-Majors/';
 var DEADLINE=new Date('2026-07-16T05:30:00Z'); /* 7:00 AM EDT = 11:00 UTC (fixed regardless of viewer's timezone) */
-var TABS=['rules','enter','leaderboard','standings','field','admin'];
+var TABS=['rules','enter','leaderboard','standings','hof','updates','field','admin'];
 var ESPN_IDS=['401811953'];
 var ESPN_BASE='https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=';
 var FIELD=[
@@ -742,7 +875,12 @@ function calcStandings(entries){
     if(qualPos===1){e.rank=1;return;}
     var pi=i-1;while(pi>=0&&!arr[pi].qualifies)pi--;
     var prev=pi>=0?arr[pi]:null;
-    if(prev){var sameScore=e.totalScore===prev.totalScore;var sameTB=final?(e.tbDiff===prev.tbDiff):true;e.rank=(sameScore&&sameTB)?prev.rank:qualPos;}
+    if(prev){
+      var sameScore=e.totalScore===prev.totalScore;
+      /* Tiebreaker only breaks 1st place ties; 2nd and 3rd ties share the rank (split prize) */
+      var sameTB=final&&prev.rank===1?(e.tbDiff===prev.tbDiff):false;
+      e.rank=(sameScore&&(prev.rank!==1||sameTB))?prev.rank:qualPos;
+    }
     else{e.rank=qualPos;}
   });
   return rows;
@@ -1017,10 +1155,24 @@ async function renderStandings(){
   var prizeH='';
   if(isFinal){
     var pc=entries.filter(function(e){return e.payment_confirmed;}).length;
+    /* Calculate split prizes for tied 2nd/3rd */
+    var r1=st.filter(function(e){return e.rank===1;});
+    var r2=st.filter(function(e){return e.rank===2;});
+    var r3=st.filter(function(e){return e.rank===3;});
+    var p1=r1.length>1?0:prz.bk[0].gross; /* 1st place resolved by tiebreaker, no split */
+    var p2=r2.length?Math.floor((prz.bk[1].gross+(r2.length>1?0:0))/r2.length):0;
+    /* If 2nd place ties bleed into 3rd pool, combine and split */
+    var p2pool=r2.length>1?prz.bk[1].gross+prz.bk[2].gross:prz.bk[1].gross;
+    var p3pool=r2.length>1?0:prz.bk[2].gross;
+    var p2each=r2.length?Math.floor(p2pool/r2.length):0;
+    var p3each=r3.length&&p3pool?Math.floor(p3pool/r3.length):0;
+    var splitNote=r2.length>1?'<div class="alert alert-warning" style="margin-bottom:1rem">2nd place tied — $'+prz.bk[1].gross+'+$'+prz.bk[2].gross+' split '+r2.length+' ways ($'+p2each+' each).</div>'
+      :r3.length>1?'<div class="alert alert-warning" style="margin-bottom:1rem">3rd place tied — $'+prz.bk[2].gross+' split '+r3.length+' ways ($'+p3each+' each).</div>':'';
     prizeH='<div class="prize-grid"><div class="prize-box total"><div class="amount">$'+prz.total+'</div><div class="label">'+pc+' paid</div></div>'
       +'<div class="prize-box"><div class="amount">$'+prz.bk[0].gross+'</div><div class="label">1st (70%)</div></div>'
-      +'<div class="prize-box"><div class="amount">$'+prz.bk[1].gross+'</div><div class="label">2nd (20%)</div></div>'
-      +'<div class="prize-box"><div class="amount">$'+prz.bk[2].gross+'</div><div class="label">3rd (10%)</div></div></div>'
+      +'<div class="prize-box"><div class="amount">'+(r2.length>1?'$'+p2each+' ea':'$'+prz.bk[1].gross)+'</div><div class="label">2nd (20%)'+(r2.length>1?' split':'')+'</div></div>'
+      +'<div class="prize-box"><div class="amount">'+(r3.length>1?'$'+p3each+' ea':p3pool?'$'+prz.bk[2].gross:'--')+'</div><div class="label">3rd (10%)'+(r3.length>1?' split':'')+'</div></div></div>'
+      +splitNote
       +'<div class="alert alert-info" style="margin-bottom:1.25rem">Prize amounts shown above. Organizers will distribute based on final standings.</div>';
   }
   var displaySt=hasScores?st.slice():sortAlpha(entries).map(function(e){return Object.assign({},e,{rank:null,qualifies:false,totalScore:null,results:[],best3:[],tbDiff:9999});});
@@ -1176,6 +1328,7 @@ function togglePwdVisibility(){
 function adminLogin(){
   if(document.getElementById('adminPwd').value===CFG.ADMIN_PWD){
     S.adminIn=true;
+    var uc=document.getElementById('upd-compose');if(uc)uc.style.display='block';
     document.getElementById('adminLogin').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
     renderAdmin();
@@ -1323,7 +1476,7 @@ function showTab(tab){
   var btn=document.querySelector('.nav-btn[data-tab="'+tab+'"]');if(btn)btn.classList.add('active');
   if(tab==='standings')renderStandings();if(tab==='leaderboard')renderLeaderboard();
   if(tab==='field')renderField();if(tab==='enter')renderEntryForm();
-  if(tab==='admin'&&S.adminIn)renderAdmin();
+  if(tab==='updates')renderUpdates();if(tab==='admin'&&S.adminIn)renderAdmin();
 }
 function updateStatusBar(){
   document.getElementById('statusDot').className=S.pgaPlayers.length?'dot dot-live':'dot dot-off';
@@ -1347,6 +1500,63 @@ async function init(){
     var active=document.querySelector('.nav-btn.active');
     if(active){var tab=active.getAttribute('data-tab');if(tab==='standings')renderStandings();if(tab==='leaderboard')renderLeaderboard();}
   },5*60*1000);
+}
+
+
+/* ============================================================
+   COMMISSIONER'S CORNER - Updates feed
+   ============================================================ */
+var UPDATES_TABLE='pool_updates';
+async function fetchUpdates(){
+  try{var rows=await sbFetch(UPDATES_TABLE+'?order=created_at.desc&limit=50&select=*');return Array.isArray(rows)?rows:[];}catch(e){return[];}
+}
+async function postUpdate(major,title,body){
+  var row={major:major,title:title,body:body,created_at:new Date().toISOString()};
+  await sbFetch(UPDATES_TABLE,{method:'POST',body:row,prefer:'return=representation'});
+}
+async function deleteUpdate(id){
+  await sbFetch(UPDATES_TABLE+'?id=eq.'+id,{method:'DELETE'});
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function nl2br(s){return String(s).replace(/\n/g,'<br>');}
+function renderUpdates(){
+  var el=document.getElementById('updatesContent');
+  if(!el)return;
+  el.innerHTML='<div class="loading-state">Loading updates...</div>';
+  fetchUpdates().then(function(rows){
+    if(!rows.length){el.innerHTML='<div style="padding:2rem;text-align:center;color:var(--gray-400)">No updates yet. Commissioner posts will appear here during tournament week.</div>';return;}
+    var h='';
+    rows.forEach(function(u){
+      var d=new Date(u.created_at);
+      var ds=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      var ts=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      h+='<div class="update-card" id="update-'+u.id+'" style="background:#fff;border:1px solid var(--gray-200);border-left:4px solid #B8902A;border-radius:8px;padding:1.25rem 1.5rem;margin-bottom:1rem;">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">';
+      h+='<div><div style="font-size:.68rem;font-weight:700;letter-spacing:.08em;color:#B8902A;text-transform:uppercase;margin-bottom:.2rem">'+escHtml(u.major||'2026 The Open')+'</div>';
+      h+='<div style="font-size:1rem;font-weight:700;color:var(--navy)">'+escHtml(u.title||'')+'</div></div>';
+      h+='<div style="text-align:right;flex-shrink:0;margin-left:1rem"><div style="font-size:.75rem;font-weight:600;color:var(--gray-500)">'+ds+'</div><div style="font-size:.7rem;color:var(--gray-400)">'+ts+'</div>';
+      if(S.adminIn)h+='<button onclick="deleteUpdatePost('+u.id+')" style="margin-top:.3rem;font-size:.65rem;color:var(--gray-400);background:none;border:none;cursor:pointer;">&#128465; delete</button>';
+      h+='</div></div>';
+      h+='<div style="font-size:.87rem;color:var(--gray-700);line-height:1.6;white-space:pre-wrap">'+escHtml(u.body||'')+'</div>';
+      h+='</div>';
+    });
+    el.innerHTML=h;
+  });
+}
+async function deleteUpdatePost(id){
+  if(!confirm('Delete this update?'))return;
+  await deleteUpdate(id);renderUpdates();
+}
+async function submitUpdate(){
+  var major=document.getElementById('upd-major').value.trim();
+  var title=document.getElementById('upd-title').value.trim();
+  var body=document.getElementById('upd-body').value.trim();
+  if(!title||!body){alert('Title and message are required.');return;}
+  var btn=document.getElementById('upd-submit');
+  btn.disabled=true;btn.textContent='Posting...';
+  try{await postUpdate(major,title,body);document.getElementById('upd-title').value='';document.getElementById('upd-body').value='';renderUpdates();}
+  catch(e){alert('Error: '+e.message);}
+  btn.disabled=false;btn.textContent='Post Update';
 }
 
 /* STICKY HEADER STACK: measure header+nav heights so nav/ticker stick correctly below them */
