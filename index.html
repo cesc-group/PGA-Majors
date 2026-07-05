@@ -1492,6 +1492,78 @@ function exportStandings(){
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='open2026-who-has-who.csv';a.click();
 }
 
+/* ============================================================
+   ALL-TIME LEGACY LEADERBOARD
+   Paste this entire block into index.html's <script>,
+   immediately ABOVE the ROUTING section comment.
+
+   To add history from Joe: append rows to ALLTIME below.
+   Nothing else changes - the table rebuilds itself on load.
+   second / third accept multiple names for ties.
+   ============================================================ */
+var ALLTIME=[
+  {year:2026,major:'Masters',champion:'Joaquin Mercado',second:['Elio Duarte'],third:[],entries:160},
+  {year:2026,major:'PGA Championship',champion:'Steven Sabo',second:['Craig Mygatt','Mike Reilley'],third:[],entries:130},
+  {year:2026,major:'US Open',champion:'Hady Jawhar',second:[],third:[],entries:125}
+];
+var LEGACY_PTS={W:5,S:3,T:1};
+function renderAllTime(){
+  var pane=document.getElementById('tab-hof');if(!pane)return;
+  var host=pane.querySelector('.container')||pane;
+  var wrap=document.getElementById('alltimeWrap');
+  if(!wrap){wrap=document.createElement('div');wrap.id='alltimeWrap';wrap.style.marginTop='2.5rem';host.appendChild(wrap);}
+  var agg={};
+  function bump(name,key){
+    if(!name)return;
+    if(!agg[name])agg[name]={name:name,W:0,S:0,T:0,pts:0,wins:[]};
+    agg[name][key]++;agg[name].pts+=LEGACY_PTS[key];
+  }
+  var totalEntries=0;var biggest=null;
+  ALLTIME.forEach(function(r){
+    totalEntries+=r.entries||0;
+    if(!biggest||(r.entries||0)>(biggest.entries||0))biggest=r;
+    bump(r.champion,'W');
+    if(r.champion)agg[r.champion].wins.push(r.year+' '+r.major);
+    (r.second||[]).forEach(function(n){bump(n,'S');});
+    (r.third||[]).forEach(function(n){bump(n,'T');});
+  });
+  var rows=Object.keys(agg).map(function(k){return agg[k];})
+    .sort(function(a,b){return b.pts-a.pts||b.W-a.W||b.S-a.S||a.name.localeCompare(b.name);});
+  var maxW=rows.reduce(function(m,r){return Math.max(m,r.W);},0);
+  var kings=rows.filter(function(r){return r.W===maxW&&maxW>0;}).map(function(r){return r.name;});
+  var kingsLbl=kings.slice(0,2).join(', ')+(kings.length>2?' +'+(kings.length-2)+' more':'');
+  var body='';var lastPts=null;var lastRank=0;
+  rows.forEach(function(r,i){
+    var rank=(r.pts===lastPts)?lastRank:(i+1);
+    lastPts=r.pts;lastRank=rank;
+    var rb=rank===1?'<span class="rank-badge rb-1">'+rank+'</span>'
+      :rank===2?'<span class="rank-badge rb-2">'+rank+'</span>'
+      :rank===3?'<span class="rank-badge rb-3">'+rank+'</span>'
+      :'<span class="rb-n">'+rank+'</span>';
+    var winsStr=r.wins.length?'<div class="entry-sub">'+r.wins.join(' &middot; ')+'</div>':'';
+    body+='<tr'+(rank===1?' class="row-rank-1"':'')+'>'
+      +'<td style="width:48px">'+rb+'</td>'
+      +'<td><div class="entry-name">'+r.name+'</div>'+winsStr+'</td>'
+      +'<td style="text-align:center;font-weight:700;color:var(--navy)">'+r.W+'</td>'
+      +'<td style="text-align:center;color:var(--gray-500)">'+r.S+'</td>'
+      +'<td style="text-align:center;color:var(--gray-500)">'+r.T+'</td>'
+      +'<td style="text-align:right;font-weight:700">'+r.pts+'</td></tr>';
+  });
+  var recs='<div class="field-hero" style="margin:1rem 0 1.25rem;">'
+    +'<div class="field-stat"><div class="fs-lbl">Majors recorded</div><div class="fs-val">'+ALLTIME.length+'</div><div class="fs-sub">since 2026</div></div>'
+    +'<div class="field-stat"><div class="fs-lbl">Total entries</div><div class="fs-val">'+totalEntries+'</div><div class="fs-sub">all-time</div></div>'
+    +'<div class="field-stat"><div class="fs-lbl">Biggest pool</div><div class="fs-val">'+(biggest?biggest.entries:'--')+'</div><div class="fs-sub">'+(biggest?biggest.year+' '+biggest.major:'')+'</div></div>'
+    +'<div class="field-stat"><div class="fs-lbl">Most titles</div><div class="fs-val">'+maxW+'</div><div class="fs-sub">'+kingsLbl+'</div></div>'
+    +'</div>';
+  wrap.innerHTML='<h2 style="font-family:\'Playfair Display\',serif;font-size:1.6rem;color:var(--navy);margin-bottom:.25rem;">All-Time Leaderboard</h2>'
+    +'<p style="color:var(--gray-500);font-size:.85rem;margin-bottom:.5rem;">Legacy points across every major &mdash; Win 5 &middot; 2nd 3 &middot; 3rd 1</p>'
+    +recs
+    +'<div class="card"><div style="overflow-x:auto"><table class="standings-table">'
+    +'<thead><tr><th>Rank</th><th>Player</th><th style="text-align:center">Titles</th><th style="text-align:center">2nd</th><th style="text-align:center">3rd</th><th style="text-align:right">Points</th></tr></thead>'
+    +'<tbody>'+body+'</tbody></table></div></div>';
+}
+renderAllTime();
+
 /* ROUTING */
 function showTab(tab){
   TABS.forEach(function(t){var p=document.getElementById('tab-'+t);if(p)p.classList.remove('active');});
