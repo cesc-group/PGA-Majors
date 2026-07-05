@@ -1637,7 +1637,7 @@ async function loadEngagement(ids){
       });
       rxEl.innerHTML=h;
     }
-    var cmEl=document.getElementById('cm-'+id);
+    var cmEl=document.getElementById('cmlist-'+id);
     if(cmEl){
       var mycm=cm.filter(function(c){return c.update_id==id;});
       var tg=document.getElementById('cmtoggle-'+id);
@@ -1673,15 +1673,21 @@ function toggleComments(id){
 }
 
 async function submitComment(updateId){
-  var nm=document.getElementById('cmname-'+updateId).value.trim();
-  var tx=document.getElementById('cmtext-'+updateId).value.trim();
-  if(!nm||!tx){alert('Name and comment are required.');return;}
-  localStorage.setItem('pool_name',nm);
   try{
-    await sbFetch('update_comments',{method:'POST',body:{update_id:updateId,name:nm,email:myEmail()||null,body:tx}});
-    document.getElementById('cmtext-'+updateId).value='';
+    var nmEl=document.getElementById('cmname-'+updateId);
+    var txEl=document.getElementById('cmtext-'+updateId);
+    if(!nmEl||!txEl){alert('Comment form not found (id '+updateId+'). Refresh and try again.');return;}
+    var nm=nmEl.value.trim();
+    var tx=txEl.value.trim();
+    if(!nm||!tx){alert('Name and comment are required.');return;}
+    localStorage.setItem('pool_name',nm);
+    await sbFetch('update_comments',{method:'POST',body:{update_id:Number(updateId),name:nm,email:myEmail()||null,body:tx}});
+    txEl.value='';
     loadEngagement([updateId]);
-  }catch(e){alert('Error posting comment: '+e.message);}
+  }catch(e){
+    console.error('Comment post failed:',e);
+    alert('Comment failed: '+(e&&e.message?e.message:String(e)));
+  }
 }
 
 async function delComment(cid,updateId){
