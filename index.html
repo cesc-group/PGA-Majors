@@ -195,6 +195,27 @@ input,select{font-family:inherit;}
   .field-hero{grid-template-columns:1fr 1fr;}
 }
 
+
+/* === UPDATES ENGAGEMENT === */
+.nav-btn{position:relative;}
+.nav-dot{position:absolute;top:8px;right:2px;width:8px;height:8px;border-radius:50%;background:#DC2626;display:none;}
+.nav-dot.on{display:block;}
+.rx-bar{display:flex;gap:.4rem;margin-top:.85rem;flex-wrap:wrap;}
+.rx-btn{border:1px solid var(--gray-200);background:#fff;border-radius:20px;padding:.2rem .6rem;font-size:.78rem;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:border-color .15s;}
+.rx-btn:hover{border-color:#B8902A;}
+.rx-btn.mine{border-color:#B8902A;background:rgba(184,144,42,.08);}
+.rx-count{font-size:.7rem;font-weight:700;color:var(--gray-500);}
+.cm-toggle{font-size:.75rem;color:var(--gray-500);cursor:pointer;background:none;border:none;padding:.2rem 0;margin-top:.5rem;}
+.cm-toggle:hover{color:var(--navy);}
+.cm-list{margin-top:.6rem;border-top:1px solid var(--gray-100);padding-top:.6rem;}
+.cm-item{padding:.45rem 0;font-size:.8rem;border-bottom:1px solid var(--gray-50);}
+.cm-name{font-weight:700;color:var(--navy);font-size:.75rem;}
+.cm-time{color:var(--gray-400);font-size:.68rem;margin-left:6px;}
+.cm-body{color:var(--gray-700);margin-top:2px;line-height:1.45;}
+.cm-form{display:flex;gap:.5rem;margin-top:.6rem;}
+.cm-form input{flex:0 0 130px;}
+.cm-form .cm-text{flex:1;}
+
 /* === STANDINGS TICKER === */
 .ticker-wrap{background:#0B1F33;border-bottom:3px solid #B8902A;overflow:hidden;width:100%;position:sticky;top:calc(var(--header-h,72px) + var(--nav-h,49px));z-index:100;}
 .ticker-inner{display:flex;align-items:stretch;height:40px;}
@@ -234,7 +255,7 @@ input,select{font-family:inherit;}
     <button class="nav-btn" data-tab="leaderboard" onclick="showTab('leaderboard')">Leaderboard</button>
     <button class="nav-btn" data-tab="standings" onclick="showTab('standings')">Standings</button>
     <button class="nav-btn" data-tab="hof" onclick="showTab('hof')">Hall of Fame</button>
-    <button class="nav-btn" data-tab="updates" onclick="showTab('updates')">Updates</button>
+    <button class="nav-btn" data-tab="updates" onclick="showTab('updates')">Updates<span class="nav-dot" id="updDot"></span></button>
     <button class="nav-btn" data-tab="field" onclick="showTab('field')">Field Analysis</button>
     <button class="nav-btn" data-tab="admin" onclick="showTab('admin')">Admin</button>
   </div>
@@ -1479,7 +1500,7 @@ function showTab(tab){
   var btn=document.querySelector('.nav-btn[data-tab="'+tab+'"]');if(btn)btn.classList.add('active');
   if(tab==='standings')renderStandings();if(tab==='leaderboard')renderLeaderboard();
   if(tab==='field')renderField();if(tab==='enter')renderEntryForm();
-  if(tab==='updates')renderUpdates();if(tab==='admin'&&S.adminIn)renderAdmin();
+  if(tab==='updates'){renderUpdates();markUpdatesSeen();}if(tab==='admin'&&S.adminIn)renderAdmin();
 }
 function updateStatusBar(){
   document.getElementById('statusDot').className=S.pgaPlayers.length?'dot dot-live':'dot dot-off';
@@ -1496,10 +1517,11 @@ async function refreshAll(){
 async function init(){
   applyPanic();
   try{await fetchEntries();}catch(_){}
-  updateStatusBar();showTab('rules');renderEntryForm();
+  updateStatusBar();showTab('rules');renderEntryForm();checkNewUpdates();
   try{fetchScores();}catch(_){}
   setInterval(async function(){
     try{await fetchScores();}catch(_){}
+    checkNewUpdates();
     var active=document.querySelector('.nav-btn.active');
     if(active){var tab=active.getAttribute('data-tab');if(tab==='standings')renderStandings();if(tab==='leaderboard')renderLeaderboard();}
   },5*60*1000);
@@ -1541,9 +1563,19 @@ function renderUpdates(){
       if(S.adminIn)h+='<button onclick="deleteUpdatePost('+u.id+')" style="margin-top:.3rem;font-size:.65rem;color:var(--gray-400);background:none;border:none;cursor:pointer;">&#128465; delete</button>';
       h+='</div></div>';
       h+='<div style="font-size:.87rem;color:var(--gray-700);line-height:1.6;white-space:pre-wrap">'+escHtml(u.body||'')+'</div>';
+      h+='<div class="rx-bar" id="rx-'+u.id+'"></div>';
+      h+='<button class="cm-toggle" id="cmtoggle-'+u.id+'" onclick="toggleComments('+u.id+')">\ud83d\udcac Add a comment</button>';
+      h+='<div id="cmbox-'+u.id+'" style="display:none">';
+      h+='<div class="cm-list" id="cmlist-'+u.id+'"></div>';
+      h+='<div class="cm-form">';
+      h+='<input class="form-control" id="cmname-'+u.id+'" placeholder="Your name" value="'+escHtml(localStorage.getItem('pool_name')||'')+'">';
+      h+='<input class="form-control cm-text" id="cmtext-'+u.id+'" placeholder="Write a comment..." onkeydown="if(event.key===\'Enter\')submitComment('+u.id+')">';
+      h+='<button class="btn btn-primary btn-sm" onclick="submitComment('+u.id+')">Post</button>';
+      h+='</div></div>';
       h+='</div>';
     });
     el.innerHTML=h;
+    loadEngagement(rows.map(function(u){return u.id;}));
   });
 }
 async function deleteUpdatePost(id){
@@ -1560,6 +1592,101 @@ async function submitUpdate(){
   try{await postUpdate(major,title,body);document.getElementById('upd-title').value='';document.getElementById('upd-body').value='';renderUpdates();}
   catch(e){alert('Error: '+e.message);}
   btn.disabled=false;btn.textContent='Post Update';
+}
+
+
+/* === UPDATES ENGAGEMENT: reactions, comments, new-post bell === */
+var RX_EMOJIS=['\ud83d\udc4d','\ud83d\udd25','\u26f3','\ud83d\ude02'];
+function myEmail(){return (localStorage.getItem('pool_email')||'').toLowerCase().trim();}
+
+async function checkNewUpdates(){
+  try{
+    var rows=await sbFetch(UPDATES_TABLE+'?order=created_at.desc&limit=1&select=created_at');
+    var dot=document.getElementById('updDot');
+    if(!dot||!rows||!rows.length)return;
+    var latest=rows[0].created_at;
+    var seen=localStorage.getItem('upd_seen_ts')||'';
+    dot.className=latest>seen?'nav-dot on':'nav-dot';
+  }catch(e){}
+}
+function markUpdatesSeen(){
+  localStorage.setItem('upd_seen_ts',new Date().toISOString());
+  var dot=document.getElementById('updDot');
+  if(dot)dot.className='nav-dot';
+}
+
+async function loadEngagement(ids){
+  if(!ids.length)return;
+  var filter='update_id=in.('+ids.join(',')+')';
+  var rx=[],cm=[];
+  try{rx=await sbFetch('update_reactions?'+filter+'&select=*')||[];}catch(e){}
+  try{cm=await sbFetch('update_comments?'+filter+'&order=created_at.asc&select=*')||[];}catch(e){}
+  var me=myEmail();
+  ids.forEach(function(id){
+    var rxEl=document.getElementById('rx-'+id);
+    if(rxEl){
+      var mine={};var counts={};
+      rx.filter(function(r){return r.update_id==id;}).forEach(function(r){
+        counts[r.emoji]=(counts[r.emoji]||0)+1;
+        if(r.email===me)mine[r.emoji]=true;
+      });
+      var h='';
+      RX_EMOJIS.forEach(function(e){
+        var c=counts[e]||0;
+        h+='<button class="rx-btn'+(mine[e]?' mine':'')+'" onclick="toggleReaction('+id+',\''+e+'\')">'+e+(c?' <span class="rx-count">'+c+'</span>':'')+'</button>';
+      });
+      rxEl.innerHTML=h;
+    }
+    var cmEl=document.getElementById('cm-'+id);
+    if(cmEl){
+      var mycm=cm.filter(function(c){return c.update_id==id;});
+      var tg=document.getElementById('cmtoggle-'+id);
+      if(tg)tg.textContent='\ud83d\udcac '+(mycm.length?mycm.length+' comment'+(mycm.length>1?'s':''):'Add a comment');
+      var h2='';
+      mycm.forEach(function(c){
+        var t=new Date(c.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        h2+='<div class="cm-item"><span class="cm-name">'+escHtml(c.name)+'</span><span class="cm-time">'+t+'</span>';
+        if(S.adminIn)h2+='<button onclick="delComment('+c.id+','+id+')" style="float:right;background:none;border:none;cursor:pointer;font-size:.65rem;color:var(--gray-400)">&#128465;</button>';
+        h2+='<div class="cm-body">'+escHtml(c.body)+'</div></div>';
+      });
+      var lst=document.getElementById('cmlist-'+id);
+      if(lst)lst.innerHTML=h2;
+    }
+  });
+}
+
+async function toggleReaction(updateId,emoji){
+  var me=myEmail();
+  if(!me){alert('Enter your email on the Enter Picks tab first so we know who you are.');return;}
+  try{
+    await sbFetch('update_reactions',{method:'POST',body:{update_id:updateId,email:me,emoji:emoji}});
+  }catch(e){
+    /* already reacted -> remove it */
+    try{await sbFetch('update_reactions?update_id=eq.'+updateId+'&email=eq.'+encodeURIComponent(me)+'&emoji=eq.'+encodeURIComponent(emoji),{method:'DELETE'});}catch(_){}
+  }
+  loadEngagement([updateId]);
+}
+
+function toggleComments(id){
+  var box=document.getElementById('cmbox-'+id);
+  if(box)box.style.display=box.style.display==='none'?'block':'none';
+}
+
+async function submitComment(updateId){
+  var nm=document.getElementById('cmname-'+updateId).value.trim();
+  var tx=document.getElementById('cmtext-'+updateId).value.trim();
+  if(!nm||!tx){alert('Name and comment are required.');return;}
+  localStorage.setItem('pool_name',nm);
+  try{
+    await sbFetch('update_comments',{method:'POST',body:{update_id:updateId,name:nm,email:myEmail()||null,body:tx}});
+    document.getElementById('cmtext-'+updateId).value='';
+    loadEngagement([updateId]);
+  }catch(e){alert('Error posting comment: '+e.message);}
+}
+
+async function delComment(cid,updateId){
+  if(!confirm('Delete this comment?'))return;
+  try{await sbFetch('update_comments?id=eq.'+cid,{method:'DELETE'});loadEngagement([updateId]);}catch(e){}
 }
 
 /* STICKY HEADER STACK: measure header+nav heights so nav/ticker stick correctly below them */
