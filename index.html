@@ -1493,18 +1493,26 @@ function exportStandings(){
 }
 
 /* ============================================================
-   ALL-TIME LEGACY LEADERBOARD
-   Paste this entire block into index.html's <script>,
-   immediately ABOVE the ROUTING section comment.
-
-   To add history from Joe: append rows to ALLTIME below.
-   Nothing else changes - the table rebuilds itself on load.
-   second / third accept multiple names for ties.
+   ALL-TIME LEGACY LEADERBOARD  v2
+   - champion accepts a string OR an array (shared titles,
+     e.g. 2025 Masters 4-way tie where tiebreakers also tied)
+   - names canonicalized to PEOPLE, not entry labels
+     (Mreilley-2 -> Mike Reilley, Hady -> Hady Jawhar, etc.)
+   - same person with multiple entries in one placement counts once
+   - entries counts omitted where unknown (pre-2026, pending Joe)
+   To add history: append rows to ALLTIME. Nothing else changes.
    ============================================================ */
 var ALLTIME=[
+  {year:2022,major:'The Open',champion:'Jeff Caisse',second:[],third:[]},
+  {year:2023,major:'US Open',champion:'D Lazarus',second:['Lohren','Craig Mygatt'],third:[]},
+  {year:2023,major:'The Open',champion:'Jeff Caisse',second:['Grant','Tom K','Bill N','E Holt','Chuck','Reiner'],third:[]},
+  {year:2024,major:'The Open',champion:'J Peters',second:['Craig Mygatt'],third:['Stolzy','B Fentress','Tom K','C Trip','E Holt','Jerz','D Lazarus','Papa Butler']},
+  {year:2025,major:'Masters',champion:['B Lebrun','Florida Man','L Corbin','Mike Reilley'],second:[],third:[]},
+  {year:2025,major:'PGA Championship',champion:'E Holt',second:['J Paez','B Fentress','Z Caisse','E Holt','D Lazarus'],third:[]},
+  {year:2025,major:'US Open',champion:'S Oliver',second:['J Vilicich'],third:['Hady Jawhar','Zigsworld']},
   {year:2026,major:'Masters',champion:'Joaquin Mercado',second:['Elio Duarte'],third:[],entries:160},
   {year:2026,major:'PGA Championship',champion:'Steven Sabo',second:['Craig Mygatt','Mike Reilley'],third:[],entries:130},
-  {year:2026,major:'US Open',champion:'Hady Jawhar',second:[],third:[],entries:125}
+  {year:2026,major:'US Open',champion:'Hady Jawhar',second:['J Vilicich'],third:['Alejandro','Kyle'],entries:125}
 ];
 var LEGACY_PTS={W:5,S:3,T:1};
 function renderAllTime(){
@@ -1521,11 +1529,16 @@ function renderAllTime(){
   var totalEntries=0;var biggest=null;
   ALLTIME.forEach(function(r){
     totalEntries+=r.entries||0;
-    if(!biggest||(r.entries||0)>(biggest.entries||0))biggest=r;
-    bump(r.champion,'W');
-    if(r.champion)agg[r.champion].wins.push(r.year+' '+r.major);
-    (r.second||[]).forEach(function(n){bump(n,'S');});
-    (r.third||[]).forEach(function(n){bump(n,'T');});
+    if(r.entries&&(!biggest||r.entries>(biggest.entries||0)))biggest=r;
+    var champs=Array.isArray(r.champion)?r.champion:(r.champion?[r.champion]:[]);
+    champs.forEach(function(n){
+      bump(n,'W');
+      agg[n].wins.push(r.year+' '+r.major+(champs.length>1?' (shared)':''));
+    });
+    /* dedupe within a placement: one credit per person */
+    var seen={};
+    (r.second||[]).forEach(function(n){if(!seen['S'+n]){seen['S'+n]=1;bump(n,'S');}});
+    (r.third||[]).forEach(function(n){if(!seen['T'+n]){seen['T'+n]=1;bump(n,'T');}});
   });
   var rows=Object.keys(agg).map(function(k){return agg[k];})
     .sort(function(a,b){return b.pts-a.pts||b.W-a.W||b.S-a.S||a.name.localeCompare(b.name);});
@@ -1550,13 +1563,13 @@ function renderAllTime(){
       +'<td style="text-align:right;font-weight:700">'+r.pts+'</td></tr>';
   });
   var recs='<div class="field-hero" style="margin:1rem 0 1.25rem;">'
-    +'<div class="field-stat"><div class="fs-lbl">Majors recorded</div><div class="fs-val">'+ALLTIME.length+'</div><div class="fs-sub">since 2026</div></div>'
-    +'<div class="field-stat"><div class="fs-lbl">Total entries</div><div class="fs-val">'+totalEntries+'</div><div class="fs-sub">all-time</div></div>'
+    +'<div class="field-stat"><div class="fs-lbl">Majors recorded</div><div class="fs-val">'+ALLTIME.length+'</div><div class="fs-sub">since 2022</div></div>'
+    +'<div class="field-stat"><div class="fs-lbl">Entries recorded</div><div class="fs-val">'+totalEntries+'</div><div class="fs-sub">2026 season (history pending)</div></div>'
     +'<div class="field-stat"><div class="fs-lbl">Biggest pool</div><div class="fs-val">'+(biggest?biggest.entries:'--')+'</div><div class="fs-sub">'+(biggest?biggest.year+' '+biggest.major:'')+'</div></div>'
     +'<div class="field-stat"><div class="fs-lbl">Most titles</div><div class="fs-val">'+maxW+'</div><div class="fs-sub">'+kingsLbl+'</div></div>'
     +'</div>';
   wrap.innerHTML='<h2 style="font-family:\'Playfair Display\',serif;font-size:1.6rem;color:var(--navy);margin-bottom:.25rem;">All-Time Leaderboard</h2>'
-    +'<p style="color:var(--gray-500);font-size:.85rem;margin-bottom:.5rem;">Legacy points across every major &mdash; Win 5 &middot; 2nd 3 &middot; 3rd 1</p>'
+    +'<p style="color:var(--gray-500);font-size:.85rem;margin-bottom:.5rem;">Legacy points across every major since 2022 &mdash; Win 5 &middot; 2nd 3 &middot; 3rd 1. Shared titles count in full.</p>'
     +recs
     +'<div class="card"><div style="overflow-x:auto"><table class="standings-table">'
     +'<thead><tr><th>Rank</th><th>Player</th><th style="text-align:center">Titles</th><th style="text-align:center">2nd</th><th style="text-align:center">3rd</th><th style="text-align:right">Points</th></tr></thead>'
