@@ -556,7 +556,7 @@ var PROXY='https://api.allorigins.win/get?url=';
 var POOL_URL='https://cesc-group.github.io/PGA-Majors/';
 var DEADLINE=new Date('2026-07-16T05:30:00Z'); /* 7:00 AM EDT = 11:00 UTC (fixed regardless of viewer's timezone) */
 var TABS=['rules','enter','leaderboard','standings','hof','updates','field','admin'];
-var ESPN_IDS=['401811953'];
+var ESPN_IDS=['401811957'];
 var ESPN_BASE='https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=';
 var FIELD=[
   'Aaron Rai',
@@ -625,6 +625,7 @@ var FIELD=[
   'Jiho Yang',
   'Joakim Lagergren',
   'Joaquin Niemann',
+  'Joe Dean',
   'John Parry',
   'Johnny Keefer',
   'Jon Rahm',
@@ -897,7 +898,7 @@ async function fetchScores(){
     if(pgaData&&pgaData.data&&pgaData.data.player)return await parsePGAFeed(pgaData);
     for(var i=0;i<ESPN_IDS.length;i++){
       var espnData=await tryFetch(ESPN_BASE+ESPN_IDS[i]);
-      if(espnData&&espnData.events&&espnData.events.length)return await parseESPNFeed(espnData);
+      if(espnData&&espnData.events&&espnData.events.length&&String(espnData.events[0].id)===ESPN_IDS[i])return await parseESPNFeed(espnData);
     }
     return false;
   }catch(e){return false;}
