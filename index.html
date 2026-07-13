@@ -1640,8 +1640,12 @@ function updateStatusBar(){
 }
 async function refreshAll(){
   var btn=document.getElementById('refreshBtn');btn.textContent='Refreshing...';btn.disabled=true;
+  try{await fetchEntries();}catch(_){}
   try{await fetchScores();}catch(_){}
-  updateStatusBar();btn.textContent='↻ Refresh';btn.disabled=false;
+  updateStatusBar();
+  var preTournament=new Date()<DEADLINE;
+  btn.textContent=preTournament?'↻ Refresh (scores live Thu)':'↻ Refresh';
+  btn.disabled=false;
   var active=document.querySelector('.nav-btn.active');
   if(active){var tab=active.getAttribute('data-tab');if(tab)showTab(tab);}
 }
