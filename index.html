@@ -495,6 +495,7 @@ input,select{font-family:inherit;}
       <textarea id="upd-body" class="form-control" rows="6" placeholder="Write your update here..." style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2);resize:vertical;font-family:inherit;"></textarea>
       <div style="margin-top:.75rem;display:flex;gap:.75rem;align-items:center;">
         <button id="upd-submit" class="btn btn-primary" onclick="submitUpdate()">Post Update</button>
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;color:rgba(255,255,255,.6);cursor:pointer;"><input type="checkbox" id="upd-pin" style="accent-color:#B8902A;width:14px;height:14px;"> &#128204; Pin to top</label>
         <span style="font-size:.75rem;color:rgba(255,255,255,.4);">Visible to all participants immediately</span>
       </div>
     </div>
@@ -1668,11 +1669,18 @@ async function init(){
    ============================================================ */
 var UPDATES_TABLE='pool_updates';
 async function fetchUpdates(){
-  try{var rows=await sbFetch(UPDATES_TABLE+'?order=created_at.desc&limit=50&select=*');return Array.isArray(rows)?rows:[];}catch(e){return[];}
+  try{var rows=await sbFetch(UPDATES_TABLE+'?order=created_at.desc&limit=50&select=*');
+    if(!Array.isArray(rows))return[];
+    return rows.slice().sort(function(a,b){return (b.pinned?1:0)-(a.pinned?1:0);});
+  }catch(e){return[];}
 }
-async function postUpdate(major,title,body){
-  var row={major:major,title:title,body:body,created_at:new Date().toISOString()};
+async function postUpdate(major,title,body,pinned){
+  var row={major:major,title:title,body:body,pinned:!!pinned,created_at:new Date().toISOString()};
   await sbFetch(UPDATES_TABLE,{method:'POST',body:row,prefer:'return=representation'});
+}
+async function togglePin(id,val){
+  await sbFetch(UPDATES_TABLE+'?id=eq.'+id,{method:'PATCH',body:{pinned:val},prefer:'return=minimal'});
+  renderUpdates();
 }
 async function deleteUpdate(id){
   await sbFetch(UPDATES_TABLE+'?id=eq.'+id,{method:'DELETE'});
@@ -1690,12 +1698,18 @@ function renderUpdates(){
       var d=new Date(u.created_at);
       var ds=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
       var ts=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-      h+='<div class="update-card" id="update-'+u.id+'" style="background:#fff;border:1px solid var(--gray-200);border-left:4px solid #B8902A;border-radius:8px;padding:1.25rem 1.5rem;margin-bottom:1rem;">';
+      var isPinned=!!u.pinned;
+      var cardTop=isPinned?'border-top:2px solid #B8902A;':'';
+      h+='<div class="update-card" id="update-'+u.id+'" style="background:#fff;border:1px solid var(--gray-200);border-left:4px solid #B8902A;'+cardTop+'border-radius:8px;padding:1.25rem 1.5rem;margin-bottom:1rem;">';
+      if(isPinned)h+='<div style="font-size:.65rem;font-weight:700;color:#B8902A;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem;">&#128204; Pinned</div>';
       h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">';
       h+='<div><div style="font-size:.68rem;font-weight:700;letter-spacing:.08em;color:#B8902A;text-transform:uppercase;margin-bottom:.2rem">'+escHtml(u.major||'2026 The Open')+'</div>';
       h+='<div style="font-size:1rem;font-weight:700;color:var(--navy)">'+escHtml(u.title||'')+'</div></div>';
       h+='<div style="text-align:right;flex-shrink:0;margin-left:1rem"><div style="font-size:.75rem;font-weight:600;color:var(--gray-500)">'+ds+'</div><div style="font-size:.7rem;color:var(--gray-400)">'+ts+'</div>';
-      if(S.adminIn)h+='<button onclick="deleteUpdatePost('+u.id+')" style="margin-top:.3rem;font-size:.65rem;color:var(--gray-400);background:none;border:none;cursor:pointer;">&#128465; delete</button>';
+      if(S.adminIn){
+        h+='<button onclick="togglePin('+u.id+','+!isPinned+')" style="margin-top:.3rem;font-size:.65rem;color:'+(isPinned?'#B8902A':'var(--gray-400)')+';background:none;border:none;cursor:pointer;display:block;">&#128204; '+(isPinned?'Unpin':'Pin')+'</button>';
+        h+='<button onclick="deleteUpdatePost('+u.id+')" style="margin-top:.2rem;font-size:.65rem;color:var(--gray-400);background:none;border:none;cursor:pointer;display:block;">&#128465; delete</button>';
+      }
       h+='</div></div>';
       h+='<div style="font-size:.87rem;color:var(--gray-700);line-height:1.6;white-space:pre-wrap">'+escHtml(u.body||'')+'</div>';
       h+='<div class="rx-bar" id="rx-'+u.id+'"></div>';
@@ -1721,10 +1735,11 @@ async function submitUpdate(){
   var major=document.getElementById('upd-major').value.trim();
   var title=document.getElementById('upd-title').value.trim();
   var body=document.getElementById('upd-body').value.trim();
+  var pinned=!!(document.getElementById('upd-pin')&&document.getElementById('upd-pin').checked);
   if(!title||!body){alert('Title and message are required.');return;}
   var btn=document.getElementById('upd-submit');
   btn.disabled=true;btn.textContent='Posting...';
-  try{await postUpdate(major,title,body);document.getElementById('upd-title').value='';document.getElementById('upd-body').value='';renderUpdates();}
+  try{await postUpdate(major,title,body,pinned);document.getElementById('upd-title').value='';document.getElementById('upd-body').value='';var pp=document.getElementById('upd-pin');if(pp)pp.checked=false;renderUpdates();}
   catch(e){alert('Error: '+e.message);}
   btn.disabled=false;btn.textContent='Post Update';
 }
