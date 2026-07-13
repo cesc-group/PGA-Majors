@@ -1699,8 +1699,10 @@ function renderUpdates(){
       var ds=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
       var ts=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
       var isPinned=!!u.pinned;
-      var cardTop=isPinned?'border-top:2px solid #B8902A;':'';
-      h+='<div class="update-card" id="update-'+u.id+'" style="background:#fff;border:1px solid var(--gray-200);border-left:4px solid #B8902A;'+cardTop+'border-radius:8px;padding:1.25rem 1.5rem;margin-bottom:1rem;">';
+      var cardStyle=isPinned
+        ?'background:#fffdf5;border:1px solid #e8d5a0;border-left:4px solid #B8902A;border-top:2px solid #B8902A;'
+        :'background:#fff;border:1px solid var(--gray-200);border-left:3px solid var(--gray-200);';
+      h+='<div class="update-card" id="update-'+u.id+'" style="'+cardStyle+'border-radius:8px;padding:1.25rem 1.5rem;margin-bottom:1rem;">';
       if(isPinned)h+='<div style="font-size:.65rem;font-weight:700;color:#B8902A;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem;">&#128204; Pinned</div>';
       h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">';
       h+='<div><div style="font-size:.68rem;font-weight:700;letter-spacing:.08em;color:#B8902A;text-transform:uppercase;margin-bottom:.2rem">'+escHtml(u.major||'2026 The Open')+'</div>';
